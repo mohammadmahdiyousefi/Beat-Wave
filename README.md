@@ -1,6 +1,5 @@
 # justaudioplayer
 
-A new Flutter project.
 <img src="https://github.com/mohammadmahdiyousefi/justaudioplayer/assets/103829998/310db818-d493-4288-8601-5730535f06df" width="250"> 
 <img src="https://github.com/mohammadmahdiyousefi/justaudioplayer/assets/103829998/279e8703-de18-415c-b39d-3af66a0e659c" width="250"> 
 <img src="https://github.com/mohammadmahdiyousefi/justaudioplayer/assets/103829998/c1761c8a-de14-4e81-9dcd-9c73d449c40e" width="250"> 
