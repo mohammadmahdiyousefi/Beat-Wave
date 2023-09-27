@@ -80,6 +80,15 @@ class DirectoryListScreen extends StatelessWidget {
             ),
           ),
         );
+      } else if (state is DirectoryErrorListState) {
+        return Center(
+          child: ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<DirectoryListBloc>(context)
+                    .add(LoadDirectoryListEvent());
+              },
+              child: const Text("retry")),
+        );
       } else {
         return const Center(
           child: CircularProgressIndicator(),

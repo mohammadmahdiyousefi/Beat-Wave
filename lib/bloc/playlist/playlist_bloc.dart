@@ -44,17 +44,17 @@ class PlaylistBloc extends Bloc<IPlaylistEvent, IPlaylistState> {
     on<AddRemovetoPlaylistEvent>((event, emit) async {
       emit(PlaylistInitState());
       String song = jsonEncode(event.song.getMap);
-      songs = playlistbox.get(event.name)!.songs;
+      songs = playlistbox.get(event.item.name)!.songs;
       if (songs.contains(song) == false) {
         songs.add(song);
       } else {
         songs.remove(song);
       }
       playlistbox.put(
-          event.name,
+          event.item.name,
           Playlist(
-              name: event.name,
-              imageid: songs.isEmpty ? 0 : SongModel(jsonDecode(songs[0])).id,
+              name: event.item.name,
+              imageid: event.item.imageid ?? SongModel(jsonDecode(songs[0])).id,
               songs: songs));
 
       emit(PlaylistState(playlistbox.values.toList()));

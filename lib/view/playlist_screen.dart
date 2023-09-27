@@ -9,7 +9,6 @@ import 'package:justaudioplayer/view/song_list.dart';
 import 'package:justaudioplayer/widget/creat_playlist_diolog.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../bloc/songlist/song_list_bloc.dart';
 import '../bloc/songlist/song_list_event.dart';
 import '../widget/artwork_widget.dart';

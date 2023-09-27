@@ -10,3 +10,10 @@ class PlaylistState extends IPlaylistState {
     this.playlist,
   );
 }
+
+class PlaylistErrorState extends IPlaylistState {
+  String error;
+  PlaylistErrorState(
+    this.error,
+  );
+}

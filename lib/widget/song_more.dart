@@ -43,12 +43,7 @@ class SongeMore extends StatelessWidget {
             }
           }
           if (value == '/Share') {
-            if (song.fileExtension == "Network") {
-              await Share.shareWithResult(song.uri!);
-            } else {
-              await Share.shareXFiles([XFile(song.data)],
-                  text: song.displayName);
-            }
+            await Share.shareXFiles([XFile(song.data)], text: song.displayName);
           }
           if (value == '/Add Play List') {
             // ignore: use_build_context_synchronously

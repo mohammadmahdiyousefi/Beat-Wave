@@ -3,31 +3,20 @@ import 'package:bloc/bloc.dart';
 import 'package:external_path/external_path.dart';
 import 'package:justaudioplayer/bloc/directorylist/directory_list_event.dart';
 import 'package:justaudioplayer/bloc/directorylist/directory_list_state.dart';
-import 'package:on_audio_query/on_audio_query.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:justaudioplayer/di/di.dart';
+import 'package:justaudioplayer/repository/localrepository/directoryrepository.dart';
 
 class DirectoryListBloc extends Bloc<IDirectoryListEvent, IDirectoryListState> {
-  List<String> directoryPaths = [];
-  OnAudioQuery audioQuery = OnAudioQuery();
-  late List<SongModel> songs = [];
+  final IDirectoryRepository _repository = locator.get();
   DirectoryListBloc(super.initialState) {
     on<LoadDirectoryListEvent>((event, emit) async {
       emit(LoadDirectoryListState());
-      directoryPaths.clear();
-      await loaddirectory();
-      emit(DirectoryListState(directoryPaths));
+      var directoryrepository = await _repository.getdirectoryrepository();
+      directoryrepository.fold((error) {
+        emit(DirectoryErrorListState(error));
+      }, (directoryPaths) {
+        emit(DirectoryListState(directoryPaths));
+      });
     });
-  }
-  Future<void> loaddirectory() async {
-    songs = await audioQuery.querySongs();
-
-    for (var song in songs) {
-      if (directoryPaths
-              .contains(song.data.substring(0, song.data.lastIndexOf("/"))) ==
-          false) {
-        directoryPaths.add(song.data.substring(0, song.data.lastIndexOf("/")));
-      }
-    }
-    directoryPaths.sort();
   }
 }

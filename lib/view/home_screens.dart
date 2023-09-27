@@ -86,7 +86,7 @@ class _HomeScreensState extends State<HomeScreens>
                       PageTransition(
                           duration: const Duration(milliseconds: 300),
                           type: PageTransitionType.fade,
-                          child: const SearchScreen()));
+                          child: SearchScreen()));
                 },
                 icon: Icon(
                   Icons.search,

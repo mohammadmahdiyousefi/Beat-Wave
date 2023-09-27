@@ -152,8 +152,11 @@ class SongListScreen extends StatelessWidget {
                                 child: SlideAnimation(
                                   verticalOffset: 50.0,
                                   child: FadeInAnimation(
-                                    child: SongTile(index, directoryname,
-                                        state.songs, false),
+                                    child: SongTile(
+                                      index,
+                                      directoryname,
+                                      state.songs,
+                                    ),
                                   ),
                                 ),
                               );

@@ -1,15 +1,10 @@
 // ignore_for_file: sort_child_properties_last
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:justaudioplayer/widget/song_info_widget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:share_plus/share_plus.dart';
-import '../bloc/favoritesong/favorite_song_bloc.dart';
-import '../bloc/favoritesong/favorite_song_event.dart';
-import 'add_to_playlist.dart';
 
 // ignore: must_be_immutable
 class SongenetworkMore extends StatelessWidget {
@@ -37,12 +32,7 @@ class SongenetworkMore extends StatelessWidget {
                 .deleteAt(networkbox.values.toList().indexOf(song.getMap));
           }
           if (value == '/Share') {
-            if (song.fileExtension == "Network") {
-              await Share.shareWithResult(song.uri!);
-            } else {
-              await Share.shareXFiles([XFile(song.data)],
-                  text: song.displayName);
-            }
+            await Share.share(song.uri!);
           }
           if (value == '/Download') {}
         },
@@ -66,24 +56,24 @@ class SongenetworkMore extends StatelessWidget {
               ),
               value: '/Download',
             ),
-            PopupMenuItem(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.delete_outline,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 25,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text("Delete",
-                      style: Theme.of(context).textTheme.titleMedium),
-                ],
-              ),
-              value: '/Delete',
-            ),
+            // PopupMenuItem(
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.start,
+            //     children: [
+            //       Icon(
+            //         Icons.delete_outline,
+            //         color: Theme.of(context).iconTheme.color,
+            //         size: 25,
+            //       ),
+            //       const SizedBox(
+            //         width: 10,
+            //       ),
+            //       Text("Delete",
+            //           style: Theme.of(context).textTheme.titleMedium),
+            //     ],
+            //   ),
+            //   value: '/Delete',
+            // ),
             PopupMenuItem(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,

@@ -8,3 +8,8 @@ class SearchSongState extends ISearchSongState {
   List<SongModel> songs;
   SearchSongState(this.songs);
 }
+
+class ErrorSearchState extends ISearchSongState {
+  String error;
+  ErrorSearchState(this.error);
+}

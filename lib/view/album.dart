@@ -126,10 +126,40 @@ class AlbumScreen extends StatelessWidget {
             ],
           ),
         );
-      } else {
+      } else if (state is AlbumErrorState) {
+        return Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(state.error),
+              const SizedBox(
+                height: 8,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    BlocProvider.of<AlbumBloc>(context).add(AlbumEvent());
+                  },
+                  child: const Text("retry")),
+            ],
+          ),
+        );
+      } else if (state is LoadAlbumState) {
         return Center(
           child:
               CircularProgressIndicator(color: Theme.of(context).primaryColor),
+        );
+      } else if (state is InitAlbumState) {
+        return Center(
+          child:
+              CircularProgressIndicator(color: Theme.of(context).primaryColor),
+        );
+      } else {
+        return Center(
+          child: ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<AlbumBloc>(context).add(AlbumEvent());
+              },
+              child: const Text("retry")),
         );
       }
     });

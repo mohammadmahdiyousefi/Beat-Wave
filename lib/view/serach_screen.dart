@@ -8,9 +8,10 @@ import '../bloc/search/search_song-event.dart';
 import 'darwer.dart';
 import 'miniplayer.dart';
 
+// ignore: must_be_immutable
 class SearchScreen extends StatelessWidget {
-  const SearchScreen({super.key});
-
+  SearchScreen({super.key});
+  TextEditingController text = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -33,6 +34,7 @@ class SearchScreen extends StatelessWidget {
               title: SizedBox(
                 height: 40,
                 child: TextField(
+                  controller: text,
                   onChanged: (value) {
                     BlocProvider.of<Searchbloc>(context)
                         .add(SearchSongEvent(value));
@@ -69,10 +71,31 @@ class SearchScreen extends StatelessWidget {
                             itemCount: state.songs.length,
                             itemBuilder: (context, index) {
                               return SongTile(
-                                  index, "search", state.songs, false);
+                                index,
+                                "search",
+                                state.songs,
+                              );
                             },
                           ))
                         ],
+                      );
+                    } else if (state is ErrorSearchState) {
+                      return Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(state.error),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  BlocProvider.of<Searchbloc>(context)
+                                      .add(SearchSongEvent(text.text));
+                                },
+                                child: const Text("retry")),
+                          ],
+                        ),
                       );
                     } else {
                       return Container();

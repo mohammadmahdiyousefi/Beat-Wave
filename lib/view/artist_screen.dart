@@ -126,10 +126,40 @@ class ArtistScreen extends StatelessWidget {
             ],
           ),
         );
-      } else {
+      } else if (state is ArtistErrorState) {
+        return Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(state.error),
+              const SizedBox(
+                height: 8,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    BlocProvider.of<ArtistBloc>(context).add(ArtistEvent());
+                  },
+                  child: const Text("retry")),
+            ],
+          ),
+        );
+      } else if (state is LoadArtistState) {
         return Center(
           child:
               CircularProgressIndicator(color: Theme.of(context).primaryColor),
+        );
+      } else if (state is InitArtistState) {
+        return Center(
+          child:
+              CircularProgressIndicator(color: Theme.of(context).primaryColor),
+        );
+      } else {
+        return Center(
+          child: ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<ArtistBloc>(context).add(ArtistEvent());
+              },
+              child: const Text("retry")),
         );
       }
     });

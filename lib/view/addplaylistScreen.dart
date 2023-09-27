@@ -93,7 +93,7 @@ class AddPlaylistScreen extends StatelessWidget {
                         onTap: () async {
                           BlocProvider.of<PlaylistBloc>(context).add(
                               AddRemovetoPlaylistEvent(
-                                  state.playlist[index].name, song!));
+                                  song!, state.playlist[index]));
                           // BlocProvider.of<SongBloc>(context)
                           //     .add(PlasyListEvent(state.playlist[index].name));
                         },

@@ -11,10 +11,14 @@ class InitPlayerEnent extends IPlayerEvent {
 
 class InitNetworkPlayerEnent extends IPlayerEvent {
   String url;
-  InitNetworkPlayerEnent(this.url);
+  String path;
+  InitNetworkPlayerEnent(this.url, this.path);
 }
 
-class InitHivePlayerEnent extends IPlayerEvent {}
+class InitHivePlayerEnent extends IPlayerEvent {
+  String path;
+  InitHivePlayerEnent(this.path);
+}
 
 class StartPlayerEnent extends IPlayerEvent {}
 

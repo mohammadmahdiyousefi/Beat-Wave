@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:justaudioplayer/bloc/allsongs/all_songs_bloc.dart';
@@ -13,8 +12,6 @@ class AllSongScreen extends StatelessWidget {
     super.key,
   });
   ScrollController controller = ScrollController();
-
-  Random random = Random();
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AllSongsBloc, IAllSnogsState>(builder: (context, state) {
@@ -41,18 +38,48 @@ class AllSongScreen extends StatelessWidget {
                 SliverList.builder(
                   itemCount: state.allsongs.length,
                   itemBuilder: (context, index) {
-                    return SongTile(index, "All", state.allsongs, false);
+                    return SongTile(index, "All", state.allsongs);
                   },
                 ),
               ],
             ),
           ),
         );
-      } else {
+      } else if (state is AllsongError) {
+        return Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(state.error),
+              const SizedBox(
+                height: 8,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    BlocProvider.of<AllSongsBloc>(context).add(AllSongsEvent());
+                  },
+                  child: const Text("retry")),
+            ],
+          ),
+        );
+      } else if (state is InitAllSongs) {
         return Center(
             child: CircularProgressIndicator(
           color: Theme.of(context).primaryColor,
         ));
+      } else if (state is LoadAllsong) {
+        return Center(
+            child: CircularProgressIndicator(
+          color: Theme.of(context).primaryColor,
+        ));
+      } else {
+        return Center(
+          child: ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<AllSongsBloc>(context).add(AllSongsEvent());
+              },
+              child: const Text("retry")),
+        );
       }
     });
   }

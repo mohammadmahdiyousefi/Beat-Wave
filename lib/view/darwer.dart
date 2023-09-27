@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:justaudioplayer/bloc/musicnetwork/music_networc_event.dart';
+import 'package:justaudioplayer/bloc/musicnetwork/music_network_bloc.dart';
+import 'package:justaudioplayer/model/music.dart';
+import 'package:justaudioplayer/view/networkmusicscreen.dart';
 
 import 'aboutScreen.dart';
 import 'change_theme_screen.dart';
@@ -114,6 +119,37 @@ class Drawerscreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           "About",
+                          style: Theme.of(context).textTheme.displayMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+            InkWell(
+                onTap: () {
+                  BlocProvider.of<MusicNetworkBloc>(context)
+                      .add(MusicNetworkEvent());
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) {
+                      return NetworkMusicScreen();
+                    },
+                  ));
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  margin: const EdgeInsets.all(8.0),
+                  width: double.infinity,
+                  height: 50,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      const Icon(Icons.info),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Text(
+                          "net",
                           style: Theme.of(context).textTheme.displayMedium,
                         ),
                       ),

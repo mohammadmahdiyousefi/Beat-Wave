@@ -1,3 +1,4 @@
+import 'package:justaudioplayer/model/playlist.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 abstract class IPlaylistEvent {}
@@ -28,9 +29,9 @@ class EditPlaylistEvent extends IPlaylistEvent {
 }
 
 class AddRemovetoPlaylistEvent extends IPlaylistEvent {
-  String name;
+  Playlist item;
   SongModel song;
-  AddRemovetoPlaylistEvent(this.name, this.song);
+  AddRemovetoPlaylistEvent(this.song, this.item);
 }
 
 class AddPlaylistScreenEvent extends IPlaylistEvent {
