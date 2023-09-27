@@ -1,252 +1,137 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:justaudioplayer/bloc/artist/artist_bloc.dart';
+import 'package:justaudioplayer/bloc/artist/artist_state.dart';
 import 'package:justaudioplayer/view/song_list.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../bloc/artist/artist_event.dart';
 import '../bloc/songlist/song_list_bloc.dart';
 import '../bloc/songlist/song_list_event.dart';
 import '../widget/artwork_widget.dart';
 
+// ignore: must_be_immutable
 class ArtistScreen extends StatelessWidget {
-  ArtistScreen({super.key, required this.artist});
+  ArtistScreen({
+    super.key,
+  });
   ScrollController scrollcontroller = ScrollController();
-  List<ArtistModel> artist;
+
   @override
   Widget build(BuildContext context) {
-    return AnimationLimiter(
-      child: CupertinoScrollbar(
-        controller: scrollcontroller,
-        thumbVisibility: true,
-        thickness: 9,
-        thicknessWhileDragging: 12,
-        radius: const Radius.circular(10),
-        child: GridView.builder(
-          controller: scrollcontroller,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2),
-          physics: const BouncingScrollPhysics(),
-          itemCount: artist.length,
-          itemBuilder: (context, index) {
-            return AnimationConfiguration.staggeredGrid(
-              columnCount: (artist.length / 2).round(),
-              position: index,
-              duration: const Duration(milliseconds: 375),
-              child: SlideAnimation(
-                verticalOffset: 50.0,
-                child: FadeInAnimation(
-                  child: GestureDetector(
-                    onTap: () async {
-                      BlocProvider.of<SongBloc>(context)
-                          .add(ArtistListEvent(artist[index].artist));
-                      Navigator.push(
-                          context,
-                          PageTransition(
-                              type: PageTransitionType.fade,
-                              child: SongListScreen(
-                                artist[index].artist,
-                                artist[index].numberOfTracks!,
-                                id: artist[index].id,
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    return BlocBuilder<ArtistBloc, IArtistState>(builder: (context, state) {
+      if (state is ArtistState) {
+        return RefreshIndicator(
+          color: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          onRefresh: () async {
+            BlocProvider.of<ArtistBloc>(context).add(ArtistEvent());
+          },
+          child: Column(
+            children: [
+              SizedBox(
+                height: height * 0.01,
+              ),
+              Expanded(
+                child: Scrollbar(
+                  interactive: true,
+                  controller: scrollcontroller,
+                  thumbVisibility: true,
+                  thickness: 6,
+                  radius: const Radius.circular(10),
+                  child: GridView.builder(
+                    controller: scrollcontroller,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, mainAxisSpacing: 15),
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: state.artists.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () async {
+                          BlocProvider.of<SongBloc>(context).add(
+                              ArtistListEvent(state.artists[index].artist));
+                          Navigator.push(
+                              context,
+                              PageTransition(
+                                  type: PageTransitionType.fade,
+                                  child: SongListScreen(
+                                    state.artists[index].artist,
+                                    state.artists[index].numberOfTracks!,
+                                    id: state.artists[index].id,
+                                    type: ArtworkType.ARTIST,
+                                    nullartwork: "assets/images/artist.png",
+                                  )));
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 5, vertical: 0),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Colors.transparent),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              ArtworkSong(
+                                id: state.artists[index].id,
+                                height: height * 0.18,
+                                width: height * 0.18,
+                                size: 300,
+                                quality: 25,
                                 type: ArtworkType.ARTIST,
                                 nullartwork: "assets/images/artist.png",
-                              )));
-                    },
-                    child: Container(
-                      height: 160,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 5),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                      ),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.transparent),
-                      child: Column(
-                        children: [
-                          ArtworkSong(
-                            id: artist[index].id,
-                            height: 130,
-                            width: 130,
-                            size: 300,
-                            quality: 30,
-                            type: ArtworkType.ARTIST,
-                            nullartwork: "assets/images/artist.png",
-                            radius: 20,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          SizedBox(
-                            width: 100,
-                            child: Center(
-                              child: Text(
-                                artist[index].artist.trim(),
+                                radius: 20,
+                              ),
+                              SizedBox(
+                                height: height * 0.012,
+                              ),
+                              SizedBox(
+                                width: width * 0.6,
+                                child: Center(
+                                  child: Text(
+                                    state.artists[index].artist.trim(),
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: height * 0.01,
+                              ),
+                              Text(
+                                '${state.artists[index].numberOfTracks} Songs'
+                                    .toString(),
                                 style: GoogleFonts.roboto(
-                                  color: Colors.white,
-                                  fontSize: 10,
+                                  color: Colors.grey.shade700,
+                                  fontSize: 9,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ),
+                            ],
                           ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            '${artist[index].numberOfTracks} Songs'.toString(),
-                            style: GoogleFonts.roboto(
-                              color: Colors.grey.shade700,
-                              fontSize: 9,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
 
-                    // GestureDetector(
-                    //   onTap: () {
+                        // GestureDetector(
+                        //   onTap: () {
+                      );
+                    },
                   ),
                 ),
               ),
-            );
-          },
-        ),
-      ),
-    );
+            ],
+          ),
+        );
+      } else {
+        return Center(
+          child:
+              CircularProgressIndicator(color: Theme.of(context).primaryColor),
+        );
+      }
+    });
   }
 }
-// class ArtistScreen extends StatefulWidget {
-//   const ArtistScreen({super.key});
-
-//   @override
-//   State<ArtistScreen> createState() => _ArtistScreenState();
-// }
-
-// class _ArtistScreenState extends State<ArtistScreen> {
-//   ScrollController scrollcontroller = ScrollController();
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//     BlocProvider.of<Artistbloc>(context).add(ArtistEvent());
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.transparent,
-//       body: SafeArea(
-//         child: Column(children: [
-//           Expanded(
-//             child: BlocBuilder<Artistbloc, IArtistState>(
-//                 builder: (context, state) {
-//               if (state is ArtistState) {
-//                 return AnimationLimiter(
-//                   child: CupertinoScrollbar(
-//                     controller: scrollcontroller,
-//                     thumbVisibility: true,
-//                     thickness: 9,
-//                     thicknessWhileDragging: 12,
-//                     radius: const Radius.circular(10),
-//                     child: GridView.builder(
-//                       controller: scrollcontroller,
-//                       gridDelegate:
-//                           const SliverGridDelegateWithFixedCrossAxisCount(
-//                               crossAxisCount: 2),
-//                       physics: const BouncingScrollPhysics(),
-//                       itemCount: artist.length,
-//                       itemBuilder: (context, index) {
-//                         return AnimationConfiguration.staggeredGrid(
-//                           columnCount: (artist.length / 2).round(),
-//                           position: index,
-//                           duration: const Duration(milliseconds: 375),
-//                           child: SlideAnimation(
-//                             verticalOffset: 50.0,
-//                             child: FadeInAnimation(
-//                               child: GestureDetector(
-//                                 onTap: () async {
-//                                   BlocProvider.of<SongBloc>(context).add(
-//                                       ArtistListEvent(
-//                                           artist[index].artist));
-//                                   Navigator.push(
-//                                       context,
-//                                       PageTransition(
-//                                           type: PageTransitionType.fade,
-//                                           child: SongListScreen(state
-//                                               .artistModel[index].artist)));
-//                                 },
-//                                 child: Container(
-//                                   height: 160,
-//                                   margin: const EdgeInsets.symmetric(
-//                                       horizontal: 5, vertical: 5),
-//                                   padding: const EdgeInsets.symmetric(
-//                                     horizontal: 10,
-//                                   ),
-//                                   decoration: BoxDecoration(
-//                                       borderRadius: BorderRadius.circular(15),
-//                                       color: Colors.transparent),
-//                                   child: Column(
-//                                     children: [
-//                                       ArtworkSong(
-//                                         id: artist[index].id,
-//                                         height: 130,
-//                                         width: 130,
-//                                         size: 300,
-//                                         quality: 30,
-//                                         type: ArtworkType.ARTIST,
-//                                         nullartwork: Icons.person,
-//                                       ),
-//                                       const SizedBox(
-//                                         height: 10,
-//                                       ),
-//                                       SizedBox(
-//                                         width: 100,
-//                                         child: Center(
-//                                           child: Text(
-//                                             artist[index].artist
-//                                                 .trim(),
-//                                             style: const TextStyle(
-//                                                 color: Colors.white,
-//                                                 fontSize: 10),
-//                                             overflow: TextOverflow.ellipsis,
-//                                           ),
-//                                         ),
-//                                       ),
-//                                       const SizedBox(
-//                                         height: 5,
-//                                       ),
-//                                       Text(
-//                                         '${artist[index].numberOfTracks} Songs'
-//                                             .toString(),
-//                                         style: TextStyle(
-//                                             color: Colors.grey.shade700,
-//                                             fontSize: 9),
-//                                       ),
-//                                     ],
-//                                   ),
-//                                 ),
-
-//                                 // GestureDetector(
-//                                 //   onTap: () {
-//                               ),
-//                             ),
-//                           ),
-//                         );
-//                       },
-//                     ),
-//                   ),
-//                 );
-//               } else {
-//                 return const Center(child: CircularProgressIndicator());
-//               }
-//             }),
-//           ),
-//         ]),
-//       ),
-//     );
-//   }
-// }

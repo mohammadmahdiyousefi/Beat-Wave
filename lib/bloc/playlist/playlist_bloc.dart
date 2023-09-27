@@ -1,60 +1,67 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:justaudioplayer/bloc/playlist/playlist_event.dart';
 import 'package:justaudioplayer/bloc/playlist/playlist_state.dart';
+import 'package:justaudioplayer/model/playlist.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class PlaylistBloc extends Bloc<IPlaylistEvent, IPlaylistState> {
-  final OnAudioQuery _audioQuery = OnAudioQuery();
-
-  late List<PlaylistModel> playlist;
+  List<int> playlistid = [];
+  List<String> songs = [];
+  var playlistbox = Hive.box<Playlist>("playlist");
   PlaylistBloc(super.initialState) {
     on<PlaylistEvent>((event, emit) async {
       emit(PlaylistInitState());
-      await loadplaylist();
-      emit(PlaylistState(playlist));
+      emit(PlaylistState(playlistbox.values.toList()));
     });
     on<CreatPlaylistEvent>((event, emit) async {
       emit(PlaylistInitState());
-      creatplaylist(event.playlistname);
-      await loadplaylist();
-      emit(PlaylistState(playlist));
+      if (playlistbox.get(event.playlistname) == null) {
+        await playlistbox.put(
+            event.playlistname, Playlist(name: event.playlistname, songs: []));
+      }
+      emit(PlaylistState(playlistbox.values.toList()));
     });
     on<RemovePlaylistEvent>((event, emit) async {
       emit(PlaylistInitState());
-      await removeplaylist(event.playlistid);
-      await loadplaylist();
-      emit(PlaylistState(playlist));
+      await playlistbox.delete(event.playlistname);
+      emit(PlaylistState(playlistbox.values.toList()));
     });
     on<EditPlaylistEvent>((event, emit) async {
       emit(PlaylistInitState());
-      editplaylist(event.playlistid, event.playlistname);
-      await loadplaylist();
-      emit(PlaylistState(playlist));
+      songs = playlistbox.get(event.playlistname)!.songs;
+      await playlistbox.delete(event.playlistname);
+      playlistbox.put(
+          event.newplaylistname,
+          Playlist(
+              name: event.newplaylistname,
+              imageid: event.imageid ?? SongModel(jsonDecode(songs[0])).id,
+              songs: songs));
+      emit(PlaylistState(playlistbox.values.toList()));
     });
-    on<AddtoPlaylistEvent>((event, emit) async {
+    on<AddRemovetoPlaylistEvent>((event, emit) async {
       emit(PlaylistInitState());
-      addtoplaylist(event.playlistid, event.musicid);
-      await loadplaylist();
-      emit(PlaylistState(playlist));
+      String song = jsonEncode(event.song.getMap);
+      songs = playlistbox.get(event.name)!.songs;
+      if (songs.contains(song) == false) {
+        songs.add(song);
+      } else {
+        songs.remove(song);
+      }
+      playlistbox.put(
+          event.name,
+          Playlist(
+              name: event.name,
+              imageid: songs.isEmpty ? 0 : SongModel(jsonDecode(songs[0])).id,
+              songs: songs));
+
+      emit(PlaylistState(playlistbox.values.toList()));
     });
-  }
-  Future loadplaylist() async {
-    playlist = await _audioQuery.queryPlaylists();
-  }
-
-  Future removeplaylist(int playlistid) async {
-    await _audioQuery.removePlaylist(playlistid);
-  }
-
-  Future creatplaylist(String name) async {
-    await _audioQuery.createPlaylist(name);
-  }
-
-  Future editplaylist(int playlistid, String name) async {
-    await _audioQuery.renamePlaylist(playlistid, name);
-  }
-
-  Future addtoplaylist(int playlistId, int audioId) async {
-    await _audioQuery.addToPlaylist(playlistId, audioId);
+    on<RemoveFromPlaylistEvent>((event, emit) async {});
+    on<AddPlaylistScreenEvent>((event, emit) async {
+      emit(PlaylistState(playlistbox.values.toList()));
+    });
   }
 }

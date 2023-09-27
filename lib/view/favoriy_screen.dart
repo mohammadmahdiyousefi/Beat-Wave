@@ -1,15 +1,9 @@
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:justaudioplayer/bloc/favoritesong/favorite_song_state.dart';
-import 'package:on_audio_query/on_audio_query.dart';
-
 import '../bloc/favoritesong/favorite_song_bloc.dart';
-import '../bloc/player/player.bloc.dart';
+import '../bloc/favoritesong/favorite_song_event.dart';
+import '../bloc/player/player_bloc.dart';
 import '../bloc/player/player_event.dart';
 import '../widget/song _tile.dart';
 
@@ -32,11 +26,17 @@ class FavoritScreen extends StatelessWidget {
             ),
           );
         } else {
-          return AnimationLimiter(
-            child: CupertinoScrollbar(
+          return RefreshIndicator(
+            color: Theme.of(context).primaryColor,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            onRefresh: () async {
+              BlocProvider.of<FavoritSongBloc>(context)
+                  .add(FavoriteSongeEvent());
+            },
+            child: Scrollbar(
+              interactive: true,
               thumbVisibility: true,
-              thickness: 9,
-              thicknessWhileDragging: 12,
+              thickness: 6,
               radius: const Radius.circular(10),
               controller: controller,
               child: ListView.builder(
@@ -45,27 +45,21 @@ class FavoritScreen extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: state.favoriteSongs.length,
                 itemBuilder: (context, index) {
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(milliseconds: 375),
-                    child: SlideAnimation(
-                      verticalOffset: 50.0,
-                      child: FadeInAnimation(
-                        child: InkWell(
-                            borderRadius: BorderRadius.circular(15),
-                            onTap: () async {
-                              BlocProvider.of<PlayerBloc>(context).add(
-                                  InitPlayerEnent(state.favoriteSongs, index,
-                                      "Favoritesong"));
-                              BlocProvider.of<PlayerBloc>(
-                                context,
-                              ).add(StartPlayerEnent());
-                            },
-                            child: SongTile(
-                                index, "Favoritesong", state.favoriteSongs)),
-                      ),
-                    ),
-                  );
+                  return InkWell(
+                      borderRadius: BorderRadius.circular(15),
+                      onTap: () async {
+                        BlocProvider.of<PlayerBloc>(context).add(
+                            InitPlayerEnent(
+                                state.favoriteSongs, index, "Favoritesong"));
+                        BlocProvider.of<PlayerBloc>(
+                          context,
+                        ).add(StartPlayerEnent());
+                      },
+                      child: SongTile(
+                        index,
+                        "Favoritesong",
+                        state.favoriteSongs,
+                      ));
                 },
               ),
             ),
@@ -77,16 +71,3 @@ class FavoritScreen extends StatelessWidget {
     });
   }
 }
-// class FavoritScreen extends StatefulWidget {
-//   const FavoritScreen({super.key});
-
-//   @override
-//   State<FavoritScreen> createState() => _FavoritScreenState();
-// }
-
-// class _FavoritScreenState extends State<FavoritScreen> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Placeholder();
-//   }
-// }

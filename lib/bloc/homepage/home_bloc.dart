@@ -8,8 +8,10 @@ class Homebloc extends Bloc<IHomeEvent, IHomeState> {
 
   Homebloc(super.initialState) {
     on<HomeEvent>((event, emit) {
-      index = event.index;
-      emit(HomeState(index));
+      emit(HomeState());
+    });
+    on<HomeSerachEvent>((event, emit) {
+      emit(HomeSearchState());
     });
   }
 }

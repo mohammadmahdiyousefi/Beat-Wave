@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 Future songInfo(BuildContext context, SongModel song) {
@@ -14,7 +12,7 @@ Future songInfo(BuildContext context, SongModel song) {
         content: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: const Color(0xff121212),
+            color: Theme.of(context).scaffoldBackgroundColor,
           ),
           height: MediaQuery.of(context).size.height * 0.7,
           width: MediaQuery.of(context).size.width * 0.9,
@@ -29,218 +27,131 @@ Future songInfo(BuildContext context, SongModel song) {
                   Center(
                     child: Text(
                       "Song Info",
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                   const SizedBox(
                     height: 15,
                   ),
-                  Text(
-                    "File",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("File", style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
                     song.displayName,
                     overflow: TextOverflow.fade,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    "Location",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("Location",
+                      style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
-                    song.data.substring(0, song.data.lastIndexOf("/")),
+                    song.data == "Null"
+                        ? "Null"
+                        : song.data.substring(0, song.data.lastIndexOf("/")),
                     overflow: TextOverflow.fade,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    "Size",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("Size", style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
                     formatBytes(song.size, 2),
                     overflow: TextOverflow.fade,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    "Date",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("Date", style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
                     song.dateAdded.toString(),
                     overflow: TextOverflow.fade,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    "Titel",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("Titel", style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
                     song.title,
                     overflow: TextOverflow.fade,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    "Format",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("Format", style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
                     song.fileExtension,
                     overflow: TextOverflow.fade,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    "Length",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("Length", style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
                     timech(Duration(milliseconds: song.duration!)),
                     overflow: TextOverflow.fade,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    "Album",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("Album", style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
                     song.album!,
                     overflow: TextOverflow.fade,
-                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    "Artist",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("Artist", style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
                     song.artist!.trim(),
                     overflow: TextOverflow.fade,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    "id",
-                    style: GoogleFonts.roboto(
-                      color: Colors.white70,
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text("id", style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(
                     height: 3,
                   ),
                   Text(
                     song.id.toString(),
                     overflow: TextOverflow.fade,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],
               ),

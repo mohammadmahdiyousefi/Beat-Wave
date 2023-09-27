@@ -1,3 +1,5 @@
+import 'package:on_audio_query/on_audio_query.dart';
+
 abstract class IPlaylistEvent {}
 
 class PlaylistEvent extends IPlaylistEvent {}
@@ -8,18 +10,30 @@ class CreatPlaylistEvent extends IPlaylistEvent {
 }
 
 class RemovePlaylistEvent extends IPlaylistEvent {
-  int playlistid;
-  RemovePlaylistEvent(this.playlistid);
+  String playlistname;
+  RemovePlaylistEvent(this.playlistname);
+}
+
+class RemoveFromPlaylistEvent extends IPlaylistEvent {
+  String name;
+  String song;
+  RemoveFromPlaylistEvent(this.name, this.song);
 }
 
 class EditPlaylistEvent extends IPlaylistEvent {
-  int playlistid;
+  int? imageid;
   String playlistname;
-  EditPlaylistEvent(this.playlistid, this.playlistname);
+  String newplaylistname;
+  EditPlaylistEvent(this.imageid, this.playlistname, this.newplaylistname);
 }
 
-class AddtoPlaylistEvent extends IPlaylistEvent {
-  int playlistid;
-  int musicid;
-  AddtoPlaylistEvent(this.playlistid, this.musicid);
+class AddRemovetoPlaylistEvent extends IPlaylistEvent {
+  String name;
+  SongModel song;
+  AddRemovetoPlaylistEvent(this.name, this.song);
+}
+
+class AddPlaylistScreenEvent extends IPlaylistEvent {
+  SongModel song;
+  AddPlaylistScreenEvent(this.song);
 }

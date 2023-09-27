@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
-
 import 'package:bloc/bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
@@ -16,6 +14,7 @@ class PlayerBloc extends Bloc<IPlayerEvent, IPlayerState> {
   List<AudioSource> source = [];
   String path = '';
   final box = Hive.box('songlist');
+  final networkbox = Hive.box('NetworkSonglist');
   var playlist = ConcatenatingAudioSource(
       useLazyPreparation: true,
       shuffleOrder: DefaultShuffleOrder(),
@@ -23,17 +22,71 @@ class PlayerBloc extends Bloc<IPlayerEvent, IPlayerState> {
   PlayerBloc(super.initialState) {
     on<InitPlayerEnent>((event, emit) async {
       emit(LoadAudioState());
-      if (event.songlist.length == box.length && event.path == path) {
-        setAudioSource(event.index, event.songlist);
-      } else {
+      if (event.path == "search") {
+        List<SongModel> songs = [];
+        songs.add(event.songlist[event.index]);
         path = event.path;
-        await saveSongList(event.songlist);
-        setAudioSource(event.index, event.songlist);
+        setAudioSource(0, songs);
+        await saveSongList(songs);
+      } else {
+        if (event.songlist.length == box.length && event.path == path) {
+          setAudioSource(event.index, event.songlist);
+        } else {
+          path = event.path;
+          setAudioSource(event.index, event.songlist);
+          await saveSongList(event.songlist);
+        }
       }
+
       emit(PlayAudioState(player.currentIndex!));
     });
-    on<StartPlayerEnent>((event, emit) {
-      player.play();
+    on<InitNetworkPlayerEnent>((event, emit) async {
+      emit(LoadAudioState());
+
+      Map<dynamic, dynamic> info = {
+        "_id": 0,
+        "_data": event.url,
+        "_uri": event.url,
+        "_display_name": event.url,
+        "_display_name_wo_ext": event.url,
+        "_size": 0,
+        "album": "Null",
+        "album_id": 0,
+        "artist": "<unknown>",
+        "artist_id": 0,
+        "genre": "Null",
+        "genre_id": 0,
+        "bookmark": 0,
+        "composer": "Null",
+        "date_added": 0,
+        "date_modified": 0,
+        "duration": 0,
+        "title": event.url,
+        "track": 0,
+        "file_extension": "Network",
+        "is_alarm": false,
+        "is_audiobook": false,
+        "is_music": true,
+        "is_notification": false,
+        "is_podcast": false,
+        "is_ringtone": false,
+      };
+
+      if (networkbox.keys.toList().contains(event.url) == false &&
+          event.url != "") {
+        await networkbox.put(event.url, info);
+        await loadnetworkSongList();
+        await setAudioSource(
+            networkbox.values.toList().lastIndexOf(info), songlist);
+        await saveSongList(songlist);
+        player.play();
+      } else {}
+
+      emit(PlayAudioState(player.currentIndex!));
+    });
+
+    on<StartPlayerEnent>((event, emit) async {
+      await player.play();
     });
     on<PausePlayerEnent>((event, emit) async {
       await player.pause();
@@ -54,11 +107,13 @@ class PlayerBloc extends Bloc<IPlayerEvent, IPlayerState> {
     });
     on<NextPlayerEnent>((event, emit) async {
       await player.seekToNext();
+
       emit(PlayAudioState(player.currentIndex!));
     });
     on<PreviousPlayerEnent>((event, emit) async {
       if (player.position < const Duration(seconds: 5)) {
         await player.seekToPrevious();
+
         emit(PlayAudioState(player.currentIndex!));
       } else {
         await player.seek(Duration.zero);
@@ -86,10 +141,14 @@ class PlayerBloc extends Bloc<IPlayerEvent, IPlayerState> {
       await player.setVolume(event.volum);
     });
     on<InitHivePlayerEnent>((event, emit) async {
-      emit(LoadAudioState());
-      await loadSongList();
-      await setAudioSource(0, songlist);
-      emit(PlayAudioState(player.currentIndex!));
+      if (box.values.toList().isEmpty) {
+        emit(LoadAudioState());
+      } else {
+        emit(LoadAudioState());
+        await loadSongList();
+        await setAudioSource(0, songlist);
+        emit(PlayAudioState(player.currentIndex!));
+      }
     });
   }
 
@@ -97,26 +156,28 @@ class PlayerBloc extends Bloc<IPlayerEvent, IPlayerState> {
     source.clear();
 
     for (var file in songlist) {
-      source.add(AudioSource.file(file.data,
-          tag: MediaItem(
-              id: file.id.toString(),
-              title: file.title,
-              artist: file.artist,
-              album: file.album,
-              genre: file.genre,
-              displayTitle: file.displayNameWOExt,
-              duration: Duration(seconds: file.duration!),
-              displayDescription: file.displayName,
-              artUri: Uri.file(
-                  "/storage/emulated/0/Music/.thumbnails/${file.id.toString()}.jpg"))));
-
-      playlist = ConcatenatingAudioSource(
-          useLazyPreparation: true,
-          shuffleOrder: DefaultShuffleOrder(),
-          children: source);
+      source.add(file.fileExtension == "Network"
+          ? AudioSource.uri(Uri.parse(file.uri!),
+              tag: MediaItem(id: file.uri!, title: file.title))
+          : AudioSource.file(file.data,
+              tag: MediaItem(
+                  id: file.id.toString(),
+                  title: file.title,
+                  artist: file.artist,
+                  album: file.album,
+                  genre: file.genre,
+                  displayTitle: file.displayNameWOExt,
+                  duration: Duration(seconds: file.duration!),
+                  displayDescription: file.displayName,
+                  artUri: Uri.file(
+                      "/storage/emulated/0/Music/.thumbnails/${file.id}.jpg"))));
     }
+    playlist = ConcatenatingAudioSource(
+        useLazyPreparation: true,
+        shuffleOrder: DefaultShuffleOrder(),
+        children: source);
 
-    await player.setAudioSource(playlist,
+    player.setAudioSource(playlist,
         initialIndex: index, initialPosition: Duration.zero);
   }
 
@@ -135,6 +196,17 @@ class PlayerBloc extends Bloc<IPlayerEvent, IPlayerState> {
       SongModel audio = SongModel(decodedJson);
       songlist.add(audio);
     }
+
+    return [];
+  }
+
+  Future<List<SongModel>> loadnetworkSongList() async {
+    songlist.clear();
+    for (var song in networkbox.values.toList()) {
+      SongModel audio = SongModel(song);
+      songlist.add(audio);
+    }
+
     return [];
   }
 }

@@ -4,8 +4,6 @@ abstract class IHomeState {}
 
 class InitHomeState extends IHomeState {}
 
-class HomeState extends IHomeState {
-  int index;
+class HomeSearchState extends IHomeState {}
 
-  HomeState(this.index);
-}
+class HomeState extends IHomeState {}

@@ -33,7 +33,7 @@ class ArtworkSong extends StatelessWidget {
       type: type,
       keepOldArtwork: true,
       artworkBorder: BorderRadius.circular(radius),
-      artworkQuality: FilterQuality.high,
+      artworkQuality: FilterQuality.medium,
       artworkFit: BoxFit.fill,
       artworkWidth: width,
       artworkHeight: height,

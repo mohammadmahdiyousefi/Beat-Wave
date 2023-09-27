@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:justaudioplayer/bloc/songlist/song_list_event.dart';
 import 'package:justaudioplayer/bloc/songlist/song_list_state.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
+import '../../model/playlist.dart';
+
 class SongBloc extends Bloc<ISongListEvent, ISongListState> {
   final OnAudioQuery _audioQuery = OnAudioQuery();
   List<SongModel> songs = [];
+  var playlistbox = Hive.box<Playlist>("playlist");
   SongBloc(super.initialState) {
     on<SongListEvent>((event, emit) async {
       emit(LoadSongListState());
@@ -49,15 +55,6 @@ class SongBloc extends Bloc<ISongListEvent, ISongListState> {
         .toList();
   }
 
-  // Future<void> loadAllmusiclist() async {
-  //   songs.clear();
-  //   songs = await _audioQuery.querySongs();
-  //   songs = songs
-  //       .where((track) => track.data.contains("Android") == false)
-  //       .map((track) => SongModel(track.getMap))
-  //       .toList();
-  // }
-
   Future<void> loadArtistmusiclist(String artist) async {
     songs.clear();
     songs = await _audioQuery.querySongs();
@@ -69,13 +66,12 @@ class SongBloc extends Bloc<ISongListEvent, ISongListState> {
 
   Future<void> loadPlaylistmusiclist(String playlist) async {
     songs.clear();
-    songs =
-        await _audioQuery.queryAudiosFrom(AudiosFromType.PLAYLIST, playlist);
-    // songs = await _audioQuery.queryFromFolder(path);
-    // songs = songs
-    //     .where((track) => track.artist == playlist)
-    //     .map((track) => SongModel(track.getMap))
-    //     .toList();
+    List<String> playlists = playlistbox.get(playlist)!.songs;
+    for (var song in playlists) {
+      dynamic decodedJson = jsonDecode(song);
+      SongModel audio = SongModel(decodedJson);
+      songs.add(audio);
+    }
   }
 
   Future<void> loadAlbummusiclist(int albumId) async {

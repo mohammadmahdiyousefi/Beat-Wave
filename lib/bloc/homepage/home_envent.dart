@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 abstract class IHomeEvent {}
 
-class HomeEvent extends IHomeEvent {
-  int index;
+class HomeSerachEvent extends IHomeEvent {}
 
-  HomeEvent(this.index);
-}
+class HomeEvent extends IHomeEvent {}

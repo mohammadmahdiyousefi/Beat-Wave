@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:justaudioplayer/view/addplaylistScreen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-import '../view/playlist_screen.dart';
-
-Future<Widget?> bottomshet(
+Future<Widget?> addtoplaylistbottomshet(
   BuildContext context,
   SongModel song,
 ) {
@@ -32,9 +31,9 @@ Future<Widget?> bottomshet(
           snap: false,
           builder: (context, scrollController) {
             return Container(
-              decoration: const BoxDecoration(
-                color: Color(0xff121212),
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
                 ),
@@ -42,9 +41,8 @@ Future<Widget?> bottomshet(
               child: Column(
                 children: [
                   Expanded(
-                    child: PlayListScren(
-                      true,
-                      song: song,
+                    child: AddPlaylistScreen(
+                      song,
                     ),
                   ),
                 ],

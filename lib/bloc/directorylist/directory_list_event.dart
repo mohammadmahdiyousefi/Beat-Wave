@@ -1,5 +1,5 @@
-abstract class IListEvent {}
+abstract class IDirectoryListEvent {}
 
-class LoadListEvent extends IListEvent {}
+class LoadDirectoryListEvent extends IDirectoryListEvent {}
 
-class UpdateistEvent extends IListEvent {}
+class UpdateistEvent extends IDirectoryListEvent {}

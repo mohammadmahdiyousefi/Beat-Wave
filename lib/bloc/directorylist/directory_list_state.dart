@@ -1,10 +1,8 @@
-import 'dart:io';
+abstract class IDirectoryListState {}
 
-abstract class IListState {}
+class LoadDirectoryListState extends IDirectoryListState {}
 
-class LoadListState extends IListState {}
-
-class ListState extends IListState {
-  List<String> directorylist = [];
-  ListState(this.directorylist);
+class DirectoryListState extends IDirectoryListState {
+  List<String> directorylist;
+  DirectoryListState(this.directorylist);
 }

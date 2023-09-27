@@ -1,10 +1,12 @@
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:justaudioplayer/model/playlist.dart';
 
 abstract class IPlaylistState {}
 
 class PlaylistInitState extends IPlaylistState {}
 
 class PlaylistState extends IPlaylistState {
-  List<PlaylistModel> playlist;
-  PlaylistState(this.playlist);
+  List<Playlist> playlist;
+  PlaylistState(
+    this.playlist,
+  );
 }

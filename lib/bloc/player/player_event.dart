@@ -9,6 +9,11 @@ class InitPlayerEnent extends IPlayerEvent {
   InitPlayerEnent(this.songlist, this.index, this.path);
 }
 
+class InitNetworkPlayerEnent extends IPlayerEvent {
+  String url;
+  InitNetworkPlayerEnent(this.url);
+}
+
 class InitHivePlayerEnent extends IPlayerEvent {}
 
 class StartPlayerEnent extends IPlayerEvent {}

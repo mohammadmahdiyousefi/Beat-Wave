@@ -13,27 +13,24 @@ Future addToPlaylistdiolog(BuildContext context) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Center(
+        title: Center(
             child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Icon(
               Icons.playlist_add,
-              color: Colors.white,
+              color: Theme.of(context).iconTheme.color,
             ),
-            SizedBox(
+            const SizedBox(
               width: 15,
             ),
-            Text(
+            const Text(
               'Creat New Playlist',
             ),
           ],
         )),
-        backgroundColor: const Color(0xff212121),
-        titleTextStyle: GoogleFonts.roboto(
-          color: Colors.white,
-          fontSize: 18,
-        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        titleTextStyle: Theme.of(context).textTheme.titleLarge,
         content: SizedBox(
           height: 150,
           width: 300,
@@ -45,10 +42,7 @@ Future addToPlaylistdiolog(BuildContext context) {
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 child: TextFormField(
                   controller: controler,
-                  style: GoogleFonts.roboto(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
+                  style: Theme.of(context).textTheme.displayMedium,
                   decoration: InputDecoration(
                       hintText: "Enter Playlist Name",
                       hintStyle: GoogleFonts.roboto(
@@ -57,8 +51,8 @@ Future addToPlaylistdiolog(BuildContext context) {
                       ),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
-                          borderSide: const BorderSide(
-                            color: Color(0xff2962FF),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
                           )),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
@@ -69,7 +63,7 @@ Future addToPlaylistdiolog(BuildContext context) {
                 padding: const EdgeInsets.only(right: 20),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff2962FF),
+                        backgroundColor: Theme.of(context).primaryColor,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () {

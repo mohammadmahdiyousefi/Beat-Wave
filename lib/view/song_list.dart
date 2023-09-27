@@ -1,16 +1,12 @@
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:justaudioplayer/bloc/songlist/song_list_bloc.dart';
 import 'package:justaudioplayer/bloc/songlist/song_list_state.dart';
+import 'package:justaudioplayer/widget/play_shuffel_button.dart';
+import 'package:marquee/marquee.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import '../bloc/player/player.bloc.dart';
-import '../bloc/player/player_event.dart';
-
 import '../widget/artwork_widget.dart';
 import '../widget/song _tile.dart';
 import 'miniplayer.dart';
@@ -35,11 +31,13 @@ class SongListScreen extends StatelessWidget {
   int numberofsong;
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: const Color(0xff121212),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
+        iconTheme: Theme.of(context).iconTheme,
         leading: GestureDetector(
           onTap: () {
             Navigator.of(context).pop();
@@ -70,8 +68,8 @@ class SongListScreen extends StatelessWidget {
                           } else ...{
                             ArtworkSong(
                               id: id!,
-                              height: 130,
-                              width: 130,
+                              height: height * 0.18,
+                              width: height * 0.18,
                               size: 300,
                               quality: 30,
                               type: type!,
@@ -88,119 +86,58 @@ class SongListScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(directoryname.split("/").last,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.roboto(
-                                        color: Colors.white, fontSize: 30)),
+                                directoryname.split("/").last.length > 10
+                                    ? SizedBox(
+                                        height: 35,
+                                        width: double.infinity,
+                                        child: Marquee(
+                                          text: directoryname.split("/").last,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displayLarge,
+                                          scrollAxis: Axis.horizontal,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          blankSpace: 60.0,
+                                          velocity: 50.0,
+                                          startAfter:
+                                              const Duration(seconds: 3),
+                                          pauseAfterRound:
+                                              const Duration(seconds: 3),
+                                          startPadding: 10.0,
+                                          accelerationDuration:
+                                              const Duration(seconds: 2),
+                                          accelerationCurve: Curves.linear,
+                                          decelerationDuration:
+                                              const Duration(seconds: 1),
+                                          decelerationCurve: Curves.easeOut,
+                                        ),
+                                      )
+                                    : Text(directoryname.split("/").last,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayLarge),
                                 const SizedBox(
                                   height: 15,
                                 ),
-                                Text("$numberofsong songs",
+                                Text("${state.songs.length} songs",
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.roboto(
-                                        color: Colors.grey.shade700,
-                                        fontSize: 15))
+                                    style:
+                                        Theme.of(context).textTheme.labelMedium)
                               ],
                             ),
                           )
                         ],
                       ),
                     ),
-                    Container(
-                      height: 60,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 15),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                      ),
-                      decoration: BoxDecoration(
-                          color: const Color(0xff212121),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                BlocProvider.of<PlayerBloc>(context).add(
-                                    InitPlayerEnent(
-                                        state.songs, 0, directoryname));
-                                BlocProvider.of<PlayerBloc>(
-                                  context,
-                                ).add(StartPlayerEnent());
-                              },
-                              child: Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: const Color(0xff2962FF),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Play ",
-                                      style: GoogleFonts.roboto(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    const Icon(
-                                      Icons.play_arrow,
-                                      color: Colors.white,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                BlocProvider.of<PlayerBloc>(context).add(
-                                    InitPlayerEnent(
-                                        state.songs,
-                                        random.nextInt(state.songs.length),
-                                        directoryname));
-                                BlocProvider.of<PlayerBloc>(
-                                  context,
-                                ).add(ShufflePlayerEnent());
-                                BlocProvider.of<PlayerBloc>(
-                                  context,
-                                ).add(StartPlayerEnent());
-                              },
-                              child: Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: Color.fromARGB(0, 41, 98, 255),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Shuffle ",
-                                      style: GoogleFonts.roboto(
-                                          color: Color.fromARGB(
-                                              255, 121, 121, 121),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    const Icon(
-                                      Icons.shuffle,
-                                      color: Color.fromARGB(255, 121, 121, 121),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    PlaySuffelbutton(directoryname, state.songs),
                     Expanded(
                       child: AnimationLimiter(
-                        child: CupertinoScrollbar(
+                        child: Scrollbar(
                           thumbVisibility: true,
-                          thickness: 9,
-                          thicknessWhileDragging: 12,
+                          thickness: 6,
+                          interactive: true,
                           controller: scrollcontroller,
                           radius: const Radius.circular(10),
                           child: ListView.builder(
@@ -215,8 +152,8 @@ class SongListScreen extends StatelessWidget {
                                 child: SlideAnimation(
                                   verticalOffset: 50.0,
                                   child: FadeInAnimation(
-                                    child: SongTile(
-                                        index, directoryname, state.songs),
+                                    child: SongTile(index, directoryname,
+                                        state.songs, false),
                                   ),
                                 ),
                               );
