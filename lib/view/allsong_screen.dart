@@ -50,7 +50,7 @@ class AllSongScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(state.error),
+              const Text("Please try again"),
               const SizedBox(
                 height: 8,
               ),
