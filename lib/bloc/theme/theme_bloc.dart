@@ -6,33 +6,46 @@ import 'theme_state.dart';
 
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   var thememode = Hive.box("ThemeMode");
-
-  ThemeBloc(super.initialState) {
+  ThemeBloc() : super(const SystemThemeModeState(ThemeMode.system)) {
+    on<InitThemeEvent>((event, emit) async {
+      // var color = thememode.get("color") ?? int.parse("ffAA00FF", radix: 16);
+      if (thememode.get("mode") == "Dark") {
+        emit(const DarkThemeState(ThemeMode.dark));
+      } else if (thememode.get("mode") == "Light") {
+        emit(const LightThemeState(ThemeMode.light));
+      } else if (thememode.get("mode") == "System") {
+        emit(const SystemThemeModeState(
+          ThemeMode.system,
+        ));
+      } else {
+        emit(const SystemThemeModeState(ThemeMode.system));
+      }
+    });
     on<LightThemeEvent>((event, emit) async {
-      await thememode.put("mode", "light");
-      var color = thememode.get("color");
-      emit(LightThemeState(color));
+      await thememode.put("mode", "Light");
+
+      emit(const LightThemeState(ThemeMode.light));
     });
     on<DarkThemeEvent>((event, emit) async {
-      await thememode.put("mode", "dark");
-      var color = thememode.get("color");
-      emit(DarkThemeState(color));
+      await thememode.put("mode", "Dark");
+      emit(const DarkThemeState(ThemeMode.dark));
     });
     on<SystemThemeModeEvent>((event, emit) async {
       await thememode.put("mode", "System");
-      var color = thememode.get("color");
-      emit(SystemThemeModeState(color));
+      emit(const SystemThemeModeState(
+        ThemeMode.system,
+      ));
     });
 
     on<SetcolorEvent>((event, emit) async {
       await thememode.put("color", int.parse(event.color, radix: 16));
       var mode = thememode.get("mode");
       if (mode == "dark") {
-        emit(DarkThemeState(int.parse(event.color, radix: 16)));
+        emit(const DarkThemeState(ThemeMode.dark));
       } else if (mode == "light") {
-        emit(LightThemeState(int.parse(event.color, radix: 16)));
+        emit(const LightThemeState(ThemeMode.light));
       } else {
-        emit(SystemThemeModeState(int.parse(event.color, radix: 16)));
+        emit(const SystemThemeModeState(ThemeMode.system));
       }
     });
   }

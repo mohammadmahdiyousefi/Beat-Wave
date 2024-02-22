@@ -1,5 +1,5 @@
-abstract class IDirectoryListEvent {}
+abstract class DirectoryListEvent {
+  const DirectoryListEvent();
+}
 
-class LoadDirectoryListEvent extends IDirectoryListEvent {}
-
-class UpdateistEvent extends IDirectoryListEvent {}
+class GetDirectoryList extends DirectoryListEvent {}

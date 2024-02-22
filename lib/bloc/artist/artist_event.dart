@@ -1,3 +1,5 @@
-abstract class IArtistEvent {}
+abstract class IArtistEvent {
+  const IArtistEvent();
+}
 
-class ArtistEvent extends IArtistEvent {}
+class GetArtistEvent extends IArtistEvent {}

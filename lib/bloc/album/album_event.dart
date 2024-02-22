@@ -1,3 +1,5 @@
-abstract class IAlbumEvent {}
+abstract class AlbumEvent {
+  const AlbumEvent();
+}
 
-class AlbumEvent extends IAlbumEvent {}
+class GetAlbumEvent extends AlbumEvent {}

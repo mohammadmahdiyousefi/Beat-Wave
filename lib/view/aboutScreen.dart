@@ -1,143 +1,88 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// ignore: must_be_immutable
 class AboutScreen extends StatelessWidget {
-  AboutScreen({super.key});
-  String github = "https://github.com/mohammadmahdiyousefi/justaudioplayer";
-  String telegram = "https://t.me/beatwavemusicplayer";
+  const AboutScreen({super.key});
+  final String buymeacoffee =
+      "https://www.buymeacoffee.com/mohammadmahdiyousefi";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: Theme.of(context).iconTheme,
         title: Text(
           "About",
-          style: Theme.of(context).textTheme.titleLarge,
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
         centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
+        shadowColor: Theme.of(context).shadowColor,
+        iconTheme: Theme.of(context).iconTheme,
+        //  elevation: 0,
       ),
       body: SafeArea(
           child: Column(
         children: [
-          const SizedBox(
-            height: 100,
-          ),
-          Container(
-            height: 150,
-            width: 150,
-            color: Colors.transparent,
-            child: Image.asset(
-              "assets/images/logo (2).png",
-              fit: BoxFit.contain,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListTile(
+              title: const Text("Version"),
+              subtitle: const Text("Tap to check for update"),
+              trailing: const Text("v0.0.1"),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              onTap: () {},
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Beat ", style: Theme.of(context).textTheme.headlineLarge),
-                Text(" Wave",
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor, fontSize: 20)
-                    //Color.fromARGB(255, 31, 192, 36), fontSize: 25),
-                    ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListTile(
+              title: const Text("share App"),
+              subtitle: const Text("Let you friend share this App"),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              onTap: () {},
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "v1.0.0",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: Text(
-              "This App an open-source project and can be found on ",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          Container(
-            width: 140,
-            height: 50,
-            margin: const EdgeInsets.only(top: 25, bottom: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Theme.of(context).primaryColor,
-            ),
-            child: GestureDetector(
-              onTap: () async {
-                await launchUrl(Uri.parse(github),
-                    mode: LaunchMode.externalApplication);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const FaIcon(
-                      FontAwesomeIcons.github,
-                      size: 23,
-                    ),
-                    Text(
-                      "GitHub ",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                  ],
-                ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListTile(
+              title: const Text("Liked my work ? "),
+              subtitle: const Text("Buy me a coffee"),
+              trailing: Image.asset(
+                "assets/images/buymeacoffee.png",
+                height: 25,
+                width: 25,
               ),
-            ),
-          ),
-          Container(
-            width: 160,
-            height: 50,
-            margin: const EdgeInsets.only(top: 15, bottom: 25),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Theme.of(context).primaryColor,
-            ),
-            child: GestureDetector(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
               onTap: () async {
-                await launchUrl(Uri.parse(telegram),
-                    mode: LaunchMode.externalApplication);
+                await launchUrl(Uri.parse(buymeacoffee));
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const FaIcon(
-                      FontAwesomeIcons.telegram,
-                      size: 23,
-                    ),
-                    Text(
-                      "Telegram",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListTile(
+              title: const Text("Donate with Gpay"),
+              subtitle: const Text("Every small amount makes me smile :) "),
+              trailing: const Icon(
+                Icons.payment,
+                color: Colors.amber,
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              onTap: () {},
+            ),
+          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 25),
+          //   child: Text(
+          //     "This App an open-source project and can be found on ",
+          //     textAlign: TextAlign.center,
+          //     style: Theme.of(context).textTheme.titleLarge,
+          //   ),
+          // ),
           const Spacer(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -147,7 +92,7 @@ class AboutScreen extends StatelessWidget {
                 Text(
                   "Made with    ",
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.labelSmall,
                 ),
                 const Icon(
                   Icons.favorite,
@@ -157,7 +102,7 @@ class AboutScreen extends StatelessWidget {
                 Text(
                   "by Mohammad Mahdi    ",
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.labelSmall,
                 ),
               ],
             ),

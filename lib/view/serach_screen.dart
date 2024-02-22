@@ -1,109 +1,224 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:justaudioplayer/bloc/search/search_song_bloc.dart';
 import 'package:justaudioplayer/bloc/search/search_song_state.dart';
-import 'package:justaudioplayer/widget/song%20_tile.dart';
-import '../bloc/search/search_song-event.dart';
-import 'darwer.dart';
+import 'package:justaudioplayer/data/model/player.dart';
+import 'package:justaudioplayer/widget/lodingwidget.dart';
+import 'package:justaudioplayer/widget/song_more.dart';
+import 'package:justaudioplayer/widget/song_tile.dart';
+import '../bloc/search/search_song_event.dart';
 import 'miniplayer.dart';
 
-// ignore: must_be_immutable
 class SearchScreen extends StatelessWidget {
-  SearchScreen({super.key});
-  TextEditingController text = TextEditingController();
+  const SearchScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-            drawer: const Drawerscreen(),
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              iconTheme: Theme.of(context).iconTheme,
-              elevation: 0,
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.cancel),
-                  splashRadius: 20,
+    return BlocProvider(
+      create: (context) {
+        var searchbloc = Searchbloc();
+        searchbloc.add(const SearchSong(""));
+        return searchbloc;
+      },
+      child: SearchView(),
+    );
+  }
+}
+
+class SearchView extends StatelessWidget {
+  SearchView({
+    super.key,
+  });
+
+  final TextEditingController text = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        floatingActionButton: Miniplayer(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          titleSpacing: 0,
+          shadowColor: Theme.of(context).shadowColor,
+          iconTheme: Theme.of(context).iconTheme,
+          actions: const [
+            SizedBox(
+              width: 16,
+            )
+          ],
+          leading: Builder(builder: (context) {
+            return IconButton(
+                splashRadius: 15,
+                padding: const EdgeInsets.all(0),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back_ios_new));
+          }),
+          title: TextField(
+              autofocus: true,
+              onChanged: (value) {
+                BlocProvider.of<Searchbloc>(context).add(SearchSong(value));
+              },
+              decoration: InputDecoration(
+                hintText: "Search songs",
+                isDense: true, // Added this
+                contentPadding: const EdgeInsets.all(6),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: const BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
                 ),
-              ],
-              title: SizedBox(
-                height: 40,
-                child: TextField(
-                  controller: text,
-                  onChanged: (value) {
-                    BlocProvider.of<Searchbloc>(context)
-                        .add(SearchSongEvent(value));
-                  },
-                  style: Theme.of(context).textTheme.titleMedium,
-                  decoration: InputDecoration(
-                      hintText: "search",
-                      hintStyle: GoogleFonts.roboto(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          )),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.grey))),
+                filled: true,
+                fillColor: Theme.of(context)
+                    .colorScheme
+                    .surfaceVariant
+                    .withOpacity(0.6),
+                prefixIconConstraints:
+                    const BoxConstraints(maxHeight: 45, maxWidth: 45),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.all(11),
+                  child: SvgPicture.asset(
+                    "assets/svg/Search.svg",
+                    height: 16,
+                    width: 16,
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
+              )),
+        ),
+        body:
+            BlocBuilder<Searchbloc, SearchSongState>(builder: (context, state) {
+          if (state is SearchSongList) {
+            return CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverList.builder(
+                    itemCount: state.songs.length,
+                    itemBuilder: (context, index) {
+                      return SongTile(
+                        song: state.songs[index],
+                        onTap: () async {
+                          await PlayerAudio.setAudioSource(
+                            state.songs,
+                            index,
+                          );
+                        },
+                        moreOnTap: () async {
+                          await moreBottomSheet(context, state.songs[index]);
+                        },
+                      );
+                    },
+                  ),
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 70),
+                  )
+                ]);
+          } else if (state is SearchSongEmpty) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/error-icon.svg",
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    state.empty,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
               ),
-              centerTitle: true,
-            ),
-            body: Column(
-              children: [
-                Expanded(
-                  child: BlocBuilder<Searchbloc, ISearchSongState>(
-                      builder: (context, state) {
-                    if (state is SearchSongState) {
-                      return Column(
-                        children: [
-                          Expanded(
-                              child: ListView.builder(
-                            itemCount: state.songs.length,
-                            itemBuilder: (context, index) {
-                              return SongTile(
-                                index,
-                                "search",
-                                state.songs,
-                              );
-                            },
-                          ))
-                        ],
-                      );
-                    } else if (state is ErrorSearchState) {
-                      return Center(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(state.error),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  BlocProvider.of<Searchbloc>(context)
-                                      .add(SearchSongEvent(text.text));
-                                },
-                                child: const Text("retry")),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }),
-                ),
-                Miniplayer(),
-              ],
-            )));
+            );
+          } else if (state is SearchSongError) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/error-icon.svg",
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    state.error,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8))),
+                    onPressed: () {
+                      BlocProvider.of<Searchbloc>(context)
+                          .add(SearchSong(text.text));
+                    },
+                    child: Text(
+                      "Try again",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else if (state is SearchSongLoading) {
+            return const Loading();
+          } else {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/error-icon.svg",
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "An unknown error occurred",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8))),
+                      onPressed: () {
+                        BlocProvider.of<Searchbloc>(context)
+                            .add(SearchSong(text.text));
+                      },
+                      child: Text(
+                        "Try again",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )),
+                ],
+              ),
+            );
+          }
+        }));
   }
 }

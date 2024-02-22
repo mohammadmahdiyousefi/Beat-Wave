@@ -1,81 +1,133 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:justaudioplayer/bloc/playlist/playlist_bloc.dart';
 import 'package:justaudioplayer/bloc/playlist/playlist_event.dart';
+import 'package:justaudioplayer/data/model/playlist.dart';
 
-import '../bloc/playlist/playlist_bloc.dart';
+Future craetePlaylist(
+  BuildContext cxt,
+) {
+  final TextEditingController controler = TextEditingController();
 
-Future addToPlaylistdiolog(BuildContext context) {
-  TextEditingController controler = TextEditingController();
   return showDialog(
-    context: context,
+    barrierColor: Colors.transparent,
+    context: cxt,
     builder: (context) {
       return AlertDialog(
+        elevation: 0,
+        insetPadding: const EdgeInsets.all(0),
+        backgroundColor: Colors.transparent,
         contentPadding: const EdgeInsets.all(0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Center(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.playlist_add,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            const Text(
-              'Creat New Playlist',
-            ),
-          ],
-        )),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        titleTextStyle: Theme.of(context).textTheme.titleLarge,
-        content: SizedBox(
-          height: 150,
-          width: 300,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                child: TextFormField(
-                  controller: controler,
-                  style: Theme.of(context).textTheme.displayMedium,
-                  decoration: InputDecoration(
-                      hintText: "Enter Playlist Name",
-                      hintStyle: GoogleFonts.roboto(
-                        color: Colors.grey,
-                        fontSize: 12,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(
+              color: Theme.of(context).cardColor,
+              height: 165,
+              width: 300,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Center(
+                      child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.playlist_add,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(
+                          width: 7,
+                        ),
+                        Text(
+                          "Create new playlist",
+                          style: Theme.of(context)
+                              .appBarTheme
+                              .titleTextStyle!
+                              .copyWith(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  )),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 10),
+                    child: SizedBox(
+                      height: 36,
+                      child: TextFormField(
+                        autofocus: true,
+                        controller: controler,
+                        style: Theme.of(context)
+                            .appBarTheme
+                            .titleTextStyle!
+                            .copyWith(color: Colors.white),
+                        decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(6),
+                            hintTextDirection: TextDirection.ltr,
+                            labelText: "Creat Playlist",
+                            labelStyle: Theme.of(context).textTheme.bodySmall,
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor,
+                                )),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    const BorderSide(color: Colors.grey))),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          )),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: const BorderSide(color: Colors.grey))),
-                ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: IconButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: Text(
+                                "Cancel",
+                                style: Theme.of(context)
+                                    .appBarTheme
+                                    .titleTextStyle!
+                                    .copyWith(color: Colors.white),
+                              )),
+                        ),
+                        Expanded(
+                          child: IconButton(
+                              onPressed: () async {
+                                await PlayListHandler.createPlaylist(
+                                        controler.text)
+                                    .then((value) {
+                                  if (value) {
+                                    BlocProvider.of<PlaylistBloc>(cxt)
+                                        .add(GetPlaylistEvent());
+                                  } else {}
+                                  Navigator.pop(context);
+                                });
+                              },
+                              icon: Text(
+                                "Create",
+                                style: Theme.of(context)
+                                    .appBarTheme
+                                    .titleTextStyle!
+                                    .copyWith(color: Colors.white),
+                              )),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: () {
-                      if (controler.text != '') {
-                        BlocProvider.of<PlaylistBloc>(context)
-                            .add(CreatPlaylistEvent(controler.text));
-                      }
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Creat")),
-              )
-            ],
+            ),
           ),
         ),
       );

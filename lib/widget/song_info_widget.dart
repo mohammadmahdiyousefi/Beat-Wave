@@ -1,166 +1,99 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-Future songInfo(BuildContext context, SongModel song) {
-  return showDialog(
+Future<Widget?> songInfoBottomSheet(
+  final BuildContext context,
+  final SongModel song,
+) {
+  Map<String, dynamic> items = {
+    "Id": song.id,
+    "Title": song.title,
+    "Data": song.data,
+    "Display Name": song.displayNameWOExt,
+    "Album": song.album,
+    "Album id": song.albumId,
+    "Artist": song.artist,
+    "Artist id": song.artistId,
+    "Gener": song.genre,
+    "Track": song.track,
+    "Size": formatBytes(song.size, 2),
+    "Duration": timech(Duration(milliseconds: song.duration ?? 0)),
+    "Data added":
+        song.dateAdded != null ? dateConvort(song.dateAdded ?? 0) : null,
+    "Data modified":
+        song.dateModified != null ? dateConvort(song.dateModified ?? 0) : null,
+    "File extention": song.fileExtension
+  };
+
+  return showModalBottomSheet(
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(25),
+        topRight: Radius.circular(25),
+      ),
+    ),
+    constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width -
+            32, // here increase or decrease in width
+        maxHeight: MediaQuery.of(context).size.height * 0.4),
     context: context,
     builder: (context) {
-      return AlertDialog(
-        contentPadding: const EdgeInsets.all(0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        content: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          height: MediaQuery.of(context).size.height * 0.7,
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Center(
-                    child: Text(
-                      "Song Info",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Text("File", style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    song.displayName,
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("Location",
-                      style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    song.data == "Null"
-                        ? "Null"
-                        : song.data.substring(0, song.data.lastIndexOf("/")),
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("Size", style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    formatBytes(song.size, 2),
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("Date", style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    song.dateAdded.toString(),
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("Titel", style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    song.title,
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("Format", style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    song.fileExtension,
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("Length", style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    timech(Duration(milliseconds: song.duration!)),
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("Album", style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    song.album!,
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("Artist", style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    song.artist!.trim(),
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Text("id", style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    song.id.toString(),
-                    overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ],
+      return ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+              child: Text(
+                song.title,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-          ),
+            const Divider(
+              indent: 16,
+              endIndent: 16,
+            ),
+            Expanded(
+                child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) => Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${items.keys.toList()[index]}  : ",
+                        style: Theme.of(context).textTheme.bodySmall),
+                    const SizedBox(
+                      width: 6,
+                    ),
+                    Expanded(
+                      child: Text(
+                        items.values.toList()[index].toString(),
+                        overflow: TextOverflow.fade,
+                        style: Theme.of(context).appBarTheme.titleTextStyle,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ))
+          ],
         ),
       );
     },
   );
+}
+
+String dateConvort(int epochTimestamp) {
+  return DateFormat('MMM dd, yyyy (hh:mm)')
+      .format(DateTime.fromMillisecondsSinceEpoch(epochTimestamp * 1000));
 }
 
 String timech(Duration duration) {

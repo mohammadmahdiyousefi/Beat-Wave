@@ -1,206 +1,353 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:justaudioplayer/bloc/songlist/song_list_bloc.dart';
+import 'package:justaudioplayer/bloc/songlist/song_list_event.dart';
 import 'package:justaudioplayer/bloc/songlist/song_list_state.dart';
-import 'package:justaudioplayer/widget/play_shuffel_button.dart';
-import 'package:marquee/marquee.dart';
+import 'package:justaudioplayer/data/model/player.dart';
+import 'package:justaudioplayer/di/di.dart';
+import 'package:justaudioplayer/widget/lodingwidget.dart';
+import 'package:justaudioplayer/widget/song_more.dart';
+import 'package:justaudioplayer/widget/song_tile.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import '../widget/artwork_widget.dart';
-import '../widget/song _tile.dart';
 import 'miniplayer.dart';
 
-// ignore: must_be_immutable
 class SongListScreen extends StatelessWidget {
   SongListScreen(
-    this.directoryname,
-    this.numberofsong, {
-    super.key,
-    this.id,
-    this.type,
-    this.nullartwork,
-  });
-  String directoryname;
-  var controller = DraggableScrollableController();
-  ScrollController scrollcontroller = ScrollController();
-  Random random = Random();
-  int? id;
-  ArtworkType? type;
-  String? nullartwork;
-  int numberofsong;
+      {super.key,
+      required this.id,
+      required this.nullArtwork,
+      required this.title,
+      required this.appbarTitle,
+      required this.type,
+      this.audiosFromType,
+      this.path});
+  final int id;
+  final String nullArtwork;
+  final String title;
+  final String appbarTitle;
+  final ArtworkType type;
+  final AudiosFromType? audiosFromType;
+  final String? path;
+  final OnAudioQuery onAudioQuery = locator.get<OnAudioQuery>();
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        iconTheme: Theme.of(context).iconTheme,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: const Icon(
-            Icons.arrow_back_ios,
-          ),
-        ),
-      ),
-      body: SafeArea(
-        child: Column(children: [
-          Expanded(
-            child: BlocBuilder<SongBloc, ISongListState>(
-                builder: (context, state) {
-              if (state is SongListState) {
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        children: [
-                          if (id == null) ...{
-                            const Icon(
-                              Icons.folder,
-                              color: Color.fromARGB(255, 147, 147, 147),
-                              size: 130,
-                            )
-                          } else ...{
-                            ArtworkSong(
-                              id: id!,
-                              height: height * 0.18,
-                              width: height * 0.18,
-                              size: 300,
-                              quality: 30,
-                              type: type!,
-                              nullartwork: nullartwork!,
-                              radius: 20,
-                            ),
-                          },
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                directoryname.split("/").last.length > 10
-                                    ? SizedBox(
-                                        height: 35,
-                                        width: double.infinity,
-                                        child: Marquee(
-                                          text: directoryname.split("/").last,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displayLarge,
-                                          scrollAxis: Axis.horizontal,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          blankSpace: 60.0,
-                                          velocity: 50.0,
-                                          startAfter:
-                                              const Duration(seconds: 3),
-                                          pauseAfterRound:
-                                              const Duration(seconds: 3),
-                                          startPadding: 10.0,
-                                          accelerationDuration:
-                                              const Duration(seconds: 2),
-                                          accelerationCurve: Curves.linear,
-                                          decelerationDuration:
-                                              const Duration(seconds: 1),
-                                          decelerationCurve: Curves.easeOut,
-                                        ),
-                                      )
-                                    : Text(directoryname.split("/").last,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .displayLarge),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                Text("${state.songs.length} songs",
-                                    overflow: TextOverflow.ellipsis,
-                                    style:
-                                        Theme.of(context).textTheme.labelMedium)
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+    return BlocProvider(
+      create: (context) {
+        var songBloc = SongBloc();
+        songBloc.add(GetSongListEvent(id, audiosFromType, path));
+        return songBloc;
+      },
+      child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          floatingActionButton: Miniplayer(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          body: BlocBuilder<SongBloc, SongListState>(
+            builder: (context, state) {
+              return CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverAppBar(
+                    titleTextStyle: Theme.of(context)
+                        .appBarTheme
+                        .titleTextStyle!
+                        .copyWith(color: Colors.white),
+                    toolbarTextStyle: Theme.of(context).textTheme.bodyMedium,
+                    elevation: 3,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    collapsedHeight: MediaQuery.of(context).size.height * 0.4,
+                    scrolledUnderElevation: 0,
+                    expandedHeight: MediaQuery.of(context).size.height * 0.4,
+                    pinned: true,
+                    centerTitle: true,
+                    title: Text(
+                      appbarTitle,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    PlaySuffelbutton(directoryname, state.songs),
-                    Expanded(
-                      child: AnimationLimiter(
-                        child: Scrollbar(
-                          thumbVisibility: true,
-                          thickness: 6,
-                          interactive: true,
-                          controller: scrollcontroller,
-                          radius: const Radius.circular(10),
-                          child: ListView.builder(
-                            controller: scrollcontroller,
-                            shrinkWrap: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: state.songs.length,
-                            itemBuilder: (context, index) {
-                              return AnimationConfiguration.staggeredList(
-                                position: index,
-                                duration: const Duration(milliseconds: 375),
-                                child: SlideAnimation(
-                                  verticalOffset: 50.0,
-                                  child: FadeInAnimation(
-                                    child: SongTile(
-                                      index,
-                                      directoryname,
-                                      state.songs,
+                    leading: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        )),
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Container(
+                        foregroundDecoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(16),
+                                bottomRight: Radius.circular(16)),
+                            gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  const Color(0xff000000).withOpacity(0.75),
+                                  const Color(0xff000000).withOpacity(0)
+                                ])),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(16),
+                              bottomRight: Radius.circular(16)),
+                          child: QueryArtworkWidget(
+                            id: id,
+                            quality: 60,
+                            size: 600,
+                            format: ArtworkFormat.JPEG,
+                            controller: onAudioQuery,
+                            type: type,
+                            keepOldArtwork: true,
+                            artworkBorder: BorderRadius.circular(0),
+                            artworkQuality: FilterQuality.low,
+                            artworkFit: BoxFit.fill,
+                            artworkHeight: double.infinity,
+                            artworkWidth: double.infinity,
+                            nullArtworkWidget: Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(0),
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                      nullArtwork,
                                     ),
-                                  ),
-                                ),
-                              );
-                            },
+                                    filterQuality: FilterQuality.low,
+                                    fit: BoxFit.cover),
+                                color: const Color.fromARGB(255, 61, 60, 60),
+                              ),
+                            ),
                           ),
                         ),
                       ),
+                      titlePadding:
+                          const EdgeInsets.only(bottom: 8, left: 16, right: 8),
+                      centerTitle: false,
+                      title: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              title,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .appBarTheme
+                                  .titleTextStyle!
+                                  .copyWith(color: Colors.white),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          if (state is SongList) ...{
+                            _playandshuffle(state.songs)
+                          } else ...{
+                            _playandshuffle([])
+                          }
+                        ],
+                      ),
                     ),
-                  ],
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            }),
-          ),
-          Miniplayer(),
-        ]),
-      ),
-      // floatingActionButton: const Miniplayer(),
-      // floatingActionButtonLocation:
-      //     FloatingActionButtonLocation.miniCenterDocked,
+                  ),
+                  if (state is SongList) ...{
+                    SliverList.builder(
+                      itemCount: state.songs.length,
+                      itemBuilder: (context, index) => SongTile(
+                        song: state.songs[index],
+                        onTap: () async {
+                          await PlayerAudio.setAudioSource(
+                            state.songs,
+                            index,
+                          );
+                        },
+                        moreOnTap: () async {
+                          if (audiosFromType == AudiosFromType.PLAYLIST) {
+                            await morePlaylistBottomSheet(context,
+                                state.songs[index], id, audiosFromType, path);
+                          } else {
+                            await moreBottomSheet(context, state.songs[index]);
+                          }
+                        },
+                      ),
+                    )
+                  } else if (state is SongListEmpty) ...{
+                    SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              "assets/svg/error-icon.svg",
+                              // ignore: deprecated_member_use
+                              color: Theme.of(context).iconTheme.color,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              state.empty,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  } else if (state is SongListError) ...{
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              "assets/svg/error-icon.svg",
+                              // ignore: deprecated_member_use
+                              color: Theme.of(context).iconTheme.color,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              state.error,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryContainer,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(16))),
+                                onPressed: () {
+                                  BlocProvider.of<SongBloc>(context).add(
+                                      GetSongListEvent(
+                                          id, audiosFromType, path));
+                                },
+                                child: Text(
+                                  "Try again",
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                )),
+                          ],
+                        ),
+                      ),
+                    )
+                  } else if (state is SongListLoading) ...{
+                    const SliverFillRemaining(
+                        hasScrollBody: false, child: Loading())
+                  } else ...{
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              "assets/svg/error-icon.svg",
+                              // ignore: deprecated_member_use
+                              color: Theme.of(context).iconTheme.color,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "An unknown error occurred",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryContainer,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(16))),
+                                onPressed: () {
+                                  BlocProvider.of<SongBloc>(context).add(
+                                      GetSongListEvent(
+                                          id, audiosFromType, path));
+                                },
+                                child: Text(
+                                  "Try again",
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                )),
+                          ],
+                        ),
+                      ),
+                    )
+                  },
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 75),
+                  )
+                ],
+              );
+            },
+          )),
     );
   }
 
-  String timech(Duration duration) {
-    String twoDigitMinutes =
-        (duration.inMinutes % 60).toString().padLeft(2, '0');
-    String twoDigitSeconds =
-        (duration.inSeconds % 60).toString().padLeft(2, '0');
-    if (duration.inHours != 0) {
-      String time = '${duration.inHours}:$twoDigitMinutes:$twoDigitSeconds';
-      return time;
-    } else {
-      String time = '$twoDigitMinutes:$twoDigitSeconds';
-      return time;
-    }
-  }
-
-  String formatBytes(int bytes, int decimals) {
-    if (bytes == 0) return "0 B";
-    const k = 1024;
-    final dm = decimals < 0 ? 0 : decimals;
-    final sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    final i = (log(bytes) / log(k)).floor();
-    return '${(bytes / pow(k, i)).toStringAsFixed(dm)} ${sizes[i]}';
+  Widget _playandshuffle(List<SongModel> songs) {
+    final Random random = Random();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        GestureDetector(
+            onTap: () async {
+              if (songs.isNotEmpty) {
+                await PlayerAudio.setAudioSource(
+                    songs, random.nextInt(songs.length),
+                    isShuffle: true);
+              }
+            },
+            child: Container(
+              width: 36,
+              height: 36,
+              padding: const EdgeInsets.all(8),
+              decoration: const ShapeDecoration(
+                color: Color(0x26F4F4F4),
+                shape: OvalBorder(),
+              ),
+              child: SvgPicture.asset(
+                "assets/svg/shuffle-icon.svg",
+                // ignore: deprecated_member_use
+                color: Colors.white,
+              ),
+            )),
+        const SizedBox(
+          width: 8,
+        ),
+        GestureDetector(
+            onTap: () async {
+              if (songs.isNotEmpty) {
+                await PlayerAudio.setAudioSource(
+                  songs,
+                  0,
+                );
+              }
+            },
+            child: Container(
+              width: 36,
+              height: 36,
+              padding: const EdgeInsets.all(5),
+              decoration: const ShapeDecoration(
+                color: Color(0x26F4F4F4),
+                shape: OvalBorder(),
+              ),
+              child: SvgPicture.asset(
+                "assets/svg/play-album-icon.svg",
+                // ignore: deprecated_member_use
+                color: Colors.white,
+              ),
+            )),
+      ],
+    );
   }
 }

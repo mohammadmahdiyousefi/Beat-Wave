@@ -1,22 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:justaudioplayer/bloc/album/album_event.dart';
-import 'package:justaudioplayer/bloc/album/album_state.dart';
 import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/repository/localrepository/artistrepository.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:justaudioplayer/data/repository/localrepository/artistrepository.dart';
 import 'artist_event.dart';
 import 'artist_state.dart';
 
-class ArtistBloc extends Bloc<IArtistEvent, IArtistState> {
+class ArtistBloc extends Bloc<IArtistEvent, ArtistState> {
   final IArtistRepository _repository = locator.get();
-  ArtistBloc(super.initialState) {
-    on<ArtistEvent>((event, emit) async {
-      emit(LoadArtistState());
-      var artistrespons = await _repository.getartistrepository();
+  ArtistBloc() : super(const ArtistLoading()) {
+    on<GetArtistEvent>((event, emit) async {
+      emit(const ArtistLoading());
+      var artistrespons = await _repository.getArtistRepository();
       artistrespons.fold((error) {
-        emit(ArtistErrorState(error));
+        emit(const ArtistError("Error loading artists"));
       }, (artist) {
-        emit(ArtistState(artist));
+        if (artist.isEmpty) {
+          emit(const ArtistEmpty("Unfortunately, no artist was found"));
+        } else {
+          emit(ArtistList(artist));
+        }
       });
     });
   }

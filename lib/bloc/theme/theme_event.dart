@@ -1,5 +1,7 @@
 abstract class ThemeEvent {}
 
+class InitThemeEvent extends ThemeEvent {}
+
 class LightThemeEvent extends ThemeEvent {}
 
 class DarkThemeEvent extends ThemeEvent {}

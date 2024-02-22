@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ryanheise.just_audio_example"
     tools:ignore="Instantiatable">
-
+    
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>

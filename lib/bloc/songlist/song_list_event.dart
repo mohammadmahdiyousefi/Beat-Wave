@@ -1,33 +1,21 @@
+import 'package:equatable/equatable.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-abstract class ISongListEvent {}
-
-class SongListEvent extends ISongListEvent {
-  String directorypath;
-
-  SongListEvent(this.directorypath);
+abstract class SongListEvent extends Equatable {
+  @override
+  List<Object> get props => [];
 }
 
-class ArtistListEvent extends ISongListEvent {
-  String artist;
-
-  ArtistListEvent(this.artist);
+class GetSongListEvent extends SongListEvent {
+  final AudiosFromType? type;
+  final int id;
+  final String? path;
+  GetSongListEvent(this.id, this.type, this.path);
+  @override
+  List<Object> get props => [id];
 }
 
-class PlasyListEvent extends ISongListEvent {
-  String playlist;
-
-  PlasyListEvent(this.playlist);
-}
-
-class AlbumListEvent extends ISongListEvent {
-  int albumId;
-
-  AlbumListEvent(this.albumId);
-}
-
-class DirectoryListEvent extends ISongListEvent {
-  String path;
-
-  DirectoryListEvent(this.path);
+class DeletSongEvent extends SongListEvent {
+  final SongModel song;
+  DeletSongEvent(this.song);
 }

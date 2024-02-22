@@ -1,16 +1,27 @@
-abstract class ThemeState {}
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+
+abstract class ThemeState extends Equatable {
+  final ThemeMode mode;
+  const ThemeState(this.mode);
+  @override
+  List<Object> get props => [mode];
+}
 
 class LightThemeState extends ThemeState {
-  int color;
-  LightThemeState(this.color);
+  const LightThemeState(super.mode);
+  @override
+  List<Object> get props => [mode];
 }
 
 class DarkThemeState extends ThemeState {
-  int color;
-  DarkThemeState(this.color);
+  const DarkThemeState(super.mode);
+  @override
+  List<Object> get props => [mode];
 }
 
 class SystemThemeModeState extends ThemeState {
-  int color;
-  SystemThemeModeState(this.color);
+  const SystemThemeModeState(super.mode);
+  @override
+  List<Object> get props => [mode];
 }

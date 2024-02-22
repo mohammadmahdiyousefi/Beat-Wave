@@ -1,317 +1,327 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:justaudioplayer/bloc/playlist/playlist_bloc.dart';
 import 'package:justaudioplayer/bloc/playlist/playlist_event.dart';
 import 'package:justaudioplayer/bloc/playlist/playlist_state.dart';
-import 'package:justaudioplayer/model/playlist.dart';
+import 'package:justaudioplayer/data/model/playlist.dart';
+import 'package:justaudioplayer/di/di.dart';
+import 'package:justaudioplayer/view/miniplayer.dart';
 import 'package:justaudioplayer/view/song_list.dart';
 import 'package:justaudioplayer/widget/creat_playlist_diolog.dart';
+import 'package:justaudioplayer/widget/lodingwidget.dart';
+import 'package:justaudioplayer/widget/navigator.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:page_transition/page_transition.dart';
-import '../bloc/songlist/song_list_bloc.dart';
-import '../bloc/songlist/song_list_event.dart';
-import '../widget/artwork_widget.dart';
 
-// ignore: must_be_immutable
-class PlayListScren extends StatelessWidget {
-  PlayListScren({
+class PlayListScreen extends StatelessWidget {
+  PlayListScreen({
     super.key,
-    this.song,
   });
-  ScrollController scrollcontroller = ScrollController();
-
-  SongModel? song;
-
+  final OnAudioQuery onAudioQuery = locator.get<OnAudioQuery>();
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-    return Column(
-      children: [
-        Expanded(child: BlocBuilder<PlaylistBloc, IPlaylistState>(
-            builder: (context, state) {
-          if (state is PlaylistState) {
-            return RefreshIndicator(
-              color: Theme.of(context).primaryColor,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              onRefresh: () async {
-                BlocProvider.of<PlaylistBloc>(context).add(PlaylistEvent());
-              },
-              child: Scrollbar(
-                interactive: true,
-                controller: scrollcontroller,
-                thumbVisibility: true,
-                thickness: 6,
-                radius: const Radius.circular(10),
-                child: CustomScrollView(controller: scrollcontroller, slivers: [
-                  SliverToBoxAdapter(
-                    child: GestureDetector(
+    return Scaffold(
+      floatingActionButton: Miniplayer(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        shadowColor: Theme.of(context).shadowColor,
+        iconTheme: Theme.of(context).iconTheme,
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: const Icon(
+              Icons.arrow_back_ios,
+            )),
+        title: Text(
+          "Playlists",
+          style: Theme.of(context).appBarTheme.titleTextStyle,
+        ),
+        centerTitle: true,
+        //  bottom: customtabbar(),
+      ),
+      body: BlocBuilder<PlaylistBloc, PlaylistState>(builder: (context, state) {
+        //------------------ state playlist true ---------------------------------------
+        return RefreshIndicator(
+          onRefresh: () async {
+            BlocProvider.of<PlaylistBloc>(context).add(GetPlaylistEvent());
+          },
+          child: CustomScrollView(
+              // physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    child: ListTile(
+                      title: const Text("Create Playlist"),
+                      leading: const Icon(Icons.add),
+                      contentPadding: const EdgeInsets.only(left: 20),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
                       onTap: () async {
-                        await addToPlaylistdiolog(context);
+                        await craetePlaylist(context);
                       },
-                      child: Card(
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        color: Theme.of(context).cardColor,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 15),
-                        child: Container(
-                          height: height * 0.065,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                          ),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).cardColor,
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Row(
-                            children: [
-                              Container(
-                                height: height * 0.05,
-                                width: height * 0.05,
-                                decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColor,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              SizedBox(
-                                width: width * 0.032,
-                              ),
-                              Text("Creat Playlist",
-                                  style:
-                                      Theme.of(context).textTheme.titleLarge),
-                            ],
-                          ),
-                        ),
-                      ),
                     ),
                   ),
-                  SliverGrid.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, mainAxisSpacing: 12),
-                      itemCount: state.playlist.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onLongPress: () async {
-                            await editPlaylistdiolog(
-                                context, state.playlist[index]);
-                          },
-                          onTap: () async {
-                            BlocProvider.of<SongBloc>(context).add(
-                                PlasyListEvent(state.playlist[index].name));
-                            Navigator.push(
-                                context,
-                                PageTransition(
-                                    type: PageTransitionType.fade,
-                                    child: SongListScreen(
-                                      state.playlist[index].name,
-                                      state.playlist[index].songs.length,
-                                      id: state.playlist[index].imageid ?? 0,
-                                      type: ArtworkType.AUDIO,
-                                      nullartwork: "assets/images/cover.jpg",
-                                    )));
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 0),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                            ),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.transparent),
-                            child: Column(
-                              children: [
-                                Stack(
-                                  alignment: Alignment.center,
+                ),
+                (state is PlayList)
+                    ? SliverList.builder(
+                        itemCount: state.playlist.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: ListTile(
+                                onTap: () {
+                                  customNavigator(
+                                    context: context,
+                                    page: SongListScreen(
+                                        id: state.playlist[index].id,
+                                        nullArtwork: "assets/images/song.png",
+                                        title: state.playlist[index].playlist,
+                                        appbarTitle: "Playlist",
+                                        type: ArtworkType.PLAYLIST,
+                                        audiosFromType:
+                                            AudiosFromType.PLAYLIST),
+                                  );
+                                },
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16)),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 7),
+                                title: Text(
+                                  state.playlist[index].playlist,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                titleTextStyle: Theme.of(context)
+                                    .listTileTheme
+                                    .titleTextStyle,
+                                subtitle: Text(
+                                  "${state.playlist[index].numOfSongs} ${state.playlist[index].numOfSongs <= 1 ? "song" : "songs"}",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                subtitleTextStyle: Theme.of(context)
+                                    .listTileTheme
+                                    .subtitleTextStyle,
+                                leading: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      image: const DecorationImage(
+                                          image: AssetImage(
+                                        "assets/images/song.png",
+                                      ))),
+                                  child: QueryArtworkWidget(
+                                    id: state.playlist[index].id,
+                                    quality: 50,
+                                    size: 200,
+                                    format: ArtworkFormat.JPEG,
+                                    controller: onAudioQuery,
+                                    type: ArtworkType.PLAYLIST,
+                                    keepOldArtwork: true,
+                                    artworkBorder: BorderRadius.circular(6),
+                                    artworkQuality: FilterQuality.low,
+                                    artworkFit: BoxFit.fill,
+                                    artworkHeight: 50,
+                                    artworkWidth: 50,
+                                    nullArtworkWidget: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        image: const DecorationImage(
+                                            image: AssetImage(
+                                              "assets/images/song.png",
+                                            ),
+                                            filterQuality: FilterQuality.low,
+                                            fit: BoxFit.cover),
+                                        color: const Color.fromARGB(
+                                            255, 61, 60, 60),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                trailing: PopupMenuButton(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16)),
+                                  icon: const Icon(
+                                    Icons.more_horiz,
+                                    size: 30,
+                                  ),
+                                  itemBuilder: (context) {
+                                    return [
+                                      PopupMenuItem(
+                                        onTap: () async {
+                                          PlayListHandler.removePlaylist(
+                                                  state.playlist[index].id)
+                                              .then((value) {
+                                            if (value) {
+                                              BlocProvider.of<PlaylistBloc>(
+                                                      context)
+                                                  .add(GetPlaylistEvent());
+                                            } else {}
+                                          });
+                                        },
+                                        child: Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                                "assets/svg/trash-icon.svg",
+                                                // ignore: deprecated_member_use
+                                                color: Theme.of(context)
+                                                    .iconTheme
+                                                    .color),
+                                            const SizedBox(
+                                              width: 9,
+                                            ),
+                                            Text("Delete",
+                                                style: Theme.of(context)
+                                                    .popupMenuTheme
+                                                    .textStyle),
+                                          ],
+                                        ),
+                                      )
+                                    ];
+                                  },
+                                )),
+                          );
+                        })
+                    : (state is PlayListLoading)
+                        ? const SliverFillRemaining(
+                            hasScrollBody: false, child: Loading())
+                        : (state is PlayListEmpty)
+                            ? SliverFillRemaining(
+                                hasScrollBody: false,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    ArtworkSong(
-                                      id: state.playlist[index].imageid ?? 0,
-                                      height: height * 0.18,
-                                      width: height * 0.18,
-                                      size: 300,
-                                      quality: 30,
-                                      type: ArtworkType.AUDIO,
-                                      radius: 20,
+                                    SvgPicture.asset(
+                                      "assets/svg/error-icon.svg",
+                                      // ignore: deprecated_member_use
+                                      color: Theme.of(context).iconTheme.color,
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      state.empty,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
                                     ),
                                   ],
                                 ),
-                                SizedBox(
-                                  height: height * 0.012,
-                                ),
-                                SizedBox(
-                                  width: width * 0.6,
-                                  child: Center(
-                                    child: Text(
-                                      state.playlist[index].name.trim(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium,
-                                      overflow: TextOverflow.ellipsis,
+                              )
+                            : (state is PlayListError)
+                                ? SliverFillRemaining(
+                                    hasScrollBody: false,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            "assets/svg/error-icon.svg",
+                                            // ignore: deprecated_member_use
+                                            color: Theme.of(context)
+                                                .iconTheme
+                                                .color,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            state.error,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .primaryColor,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8))),
+                                              onPressed: () {
+                                                BlocProvider.of<PlaylistBloc>(
+                                                        context)
+                                                    .add(GetPlaylistEvent());
+                                              },
+                                              child: Text(
+                                                "try agine",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : SliverToBoxAdapter(
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            "assets/svg/error-icon.svg",
+                                            // ignore: deprecated_member_use
+                                            color: Theme.of(context)
+                                                .iconTheme
+                                                .color,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            "Error",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .primaryColor,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8))),
+                                              onPressed: () {
+                                                BlocProvider.of<PlaylistBloc>(
+                                                        context)
+                                                    .add(GetPlaylistEvent());
+                                              },
+                                              child: Text(
+                                                "Try again",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              )),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: height * 0.01,
-                                ),
-                                Text(
-                                  '${state.playlist[index].songs.length} Songs'
-                                      .toString(),
-                                  style: GoogleFonts.roboto(
-                                    color: Colors.grey.shade700,
-                                    fontSize: 9,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      })
-                ]),
-              ),
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ),
-            );
-          }
-        }))
-      ],
+              ]),
+        );
+      }),
     );
   }
-}
-
-Future editPlaylistdiolog(BuildContext context, Playlist playlist) {
-  TextEditingController controler = TextEditingController(text: playlist.name);
-  TextEditingController imageidcontroler =
-      TextEditingController(text: playlist.imageid.toString());
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        contentPadding: const EdgeInsets.all(0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Center(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.edit,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            const Text(
-              'Edit Playlist',
-            ),
-          ],
-        )),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        titleTextStyle: Theme.of(context).textTheme.titleLarge,
-        content: SizedBox(
-          height: 250,
-          width: 300,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                child: TextFormField(
-                  controller: controler,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  decoration: InputDecoration(
-                      labelText: "Playlist Name",
-                      labelStyle: Theme.of(context).textTheme.labelSmall,
-                      hintText: "Rename Playlist Name",
-                      hintStyle: GoogleFonts.roboto(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          )),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: const BorderSide(color: Colors.grey))),
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                child: TextFormField(
-                  controller: imageidcontroler,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  decoration: InputDecoration(
-                      labelText: "Image Id",
-                      labelStyle: Theme.of(context).textTheme.labelSmall,
-                      hintText: "Image Id",
-                      hintStyle: GoogleFonts.roboto(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          )),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: const BorderSide(color: Colors.grey))),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        onPressed: () {
-                          BlocProvider.of<PlaylistBloc>(context)
-                              .add(RemovePlaylistEvent(playlist.name));
-
-                          Navigator.pop(context);
-                        },
-                        child: const Icon(Icons.delete)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        onPressed: () {
-                          BlocProvider.of<PlaylistBloc>(context).add(
-                              EditPlaylistEvent(
-                                  int.parse(imageidcontroler.text),
-                                  playlist.name,
-                                  controler.text));
-                          Navigator.pop(context);
-                        },
-                        child: const Text("Save")),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }

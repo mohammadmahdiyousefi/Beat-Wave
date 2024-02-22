@@ -1,21 +1,23 @@
-import 'dart:io';
 import 'package:bloc/bloc.dart';
-import 'package:external_path/external_path.dart';
 import 'package:justaudioplayer/bloc/directorylist/directory_list_event.dart';
 import 'package:justaudioplayer/bloc/directorylist/directory_list_state.dart';
 import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/repository/localrepository/directoryrepository.dart';
+import 'package:justaudioplayer/data/repository/localrepository/directoryrepository.dart';
 
-class DirectoryListBloc extends Bloc<IDirectoryListEvent, IDirectoryListState> {
+class DirectoryListBloc extends Bloc<DirectoryListEvent, DirectoryListState> {
   final IDirectoryRepository _repository = locator.get();
-  DirectoryListBloc(super.initialState) {
-    on<LoadDirectoryListEvent>((event, emit) async {
-      emit(LoadDirectoryListState());
+  DirectoryListBloc() : super(const DirectoryListLoading()) {
+    on<GetDirectoryList>((event, emit) async {
+      emit(const DirectoryListLoading());
       var directoryrepository = await _repository.getdirectoryrepository();
       directoryrepository.fold((error) {
-        emit(DirectoryErrorListState(error));
+        emit(const DirectoryListError("Error loading folders"));
       }, (directoryPaths) {
-        emit(DirectoryListState(directoryPaths));
+        if (directoryPaths.isEmpty) {
+          emit(const DirectoryListEmpty("Unfortunately, no folder was found"));
+        } else {
+          emit(DirectoryList(directoryPaths));
+        }
       });
     });
   }

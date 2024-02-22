@@ -1,167 +1,208 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:justaudioplayer/bloc/artist/artist_bloc.dart';
 import 'package:justaudioplayer/bloc/artist/artist_state.dart';
+import 'package:justaudioplayer/view/miniplayer.dart';
 import 'package:justaudioplayer/view/song_list.dart';
+import 'package:justaudioplayer/widget/gride_view_widget.dart';
+import 'package:justaudioplayer/widget/lodingwidget.dart';
+import 'package:justaudioplayer/widget/navigator.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:page_transition/page_transition.dart';
-
 import '../bloc/artist/artist_event.dart';
-import '../bloc/songlist/song_list_bloc.dart';
-import '../bloc/songlist/song_list_event.dart';
-import '../widget/artwork_widget.dart';
 
-// ignore: must_be_immutable
 class ArtistScreen extends StatelessWidget {
-  ArtistScreen({
-    super.key,
-  });
-  ScrollController scrollcontroller = ScrollController();
+  const ArtistScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-    return BlocBuilder<ArtistBloc, IArtistState>(builder: (context, state) {
-      if (state is ArtistState) {
-        return RefreshIndicator(
-          color: Theme.of(context).primaryColor,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          onRefresh: () async {
-            BlocProvider.of<ArtistBloc>(context).add(ArtistEvent());
-          },
-          child: Column(
-            children: [
-              SizedBox(
-                height: height * 0.01,
-              ),
-              Expanded(
-                child: Scrollbar(
-                  interactive: true,
-                  controller: scrollcontroller,
-                  thumbVisibility: true,
-                  thickness: 6,
-                  radius: const Radius.circular(10),
-                  child: GridView.builder(
-                    controller: scrollcontroller,
+    return Scaffold(
+      floatingActionButton: Miniplayer(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        shadowColor: Theme.of(context).shadowColor,
+        iconTheme: Theme.of(context).iconTheme,
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: const Icon(
+              Icons.arrow_back_ios,
+            )),
+        title: Text(
+          "Artist",
+          style: Theme.of(context).appBarTheme.titleTextStyle,
+        ),
+        centerTitle: true,
+        //  bottom: customtabbar(),
+      ),
+      body: BlocBuilder<ArtistBloc, ArtistState>(builder: (context, state) {
+        //------------------- state true artist ----------------------------------------
+        if (state is ArtistList) {
+          return RefreshIndicator(
+            onRefresh: () async {
+              BlocProvider.of<ArtistBloc>(context).add(GetArtistEvent());
+            },
+            child: CustomScrollView(
+              slivers: [
+                const SliverToBoxAdapter(child: SizedBox(height: 6)),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                  ),
+                  sliver: SliverGrid.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, mainAxisSpacing: 15),
-                    physics: const BouncingScrollPhysics(),
+                            mainAxisExtent: 250,
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16),
                     itemCount: state.artists.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: () async {
-                          BlocProvider.of<SongBloc>(context).add(
-                              ArtistListEvent(state.artists[index].artist));
-                          Navigator.push(
-                              context,
-                              PageTransition(
-                                  type: PageTransitionType.fade,
-                                  child: SongListScreen(
-                                    state.artists[index].artist,
-                                    state.artists[index].numberOfTracks!,
-                                    id: state.artists[index].id,
-                                    type: ArtworkType.ARTIST,
-                                    nullartwork: "assets/images/artist.png",
-                                  )));
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Colors.transparent),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              ArtworkSong(
-                                id: state.artists[index].id,
-                                height: height * 0.18,
-                                width: height * 0.18,
-                                size: 300,
-                                quality: 25,
-                                type: ArtworkType.ARTIST,
-                                nullartwork: "assets/images/artist.png",
-                                radius: 20,
-                              ),
-                              SizedBox(
-                                height: height * 0.012,
-                              ),
-                              SizedBox(
-                                width: width * 0.6,
-                                child: Center(
-                                  child: Text(
-                                    state.artists[index].artist.trim(),
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: height * 0.01,
-                              ),
-                              Text(
-                                '${state.artists[index].numberOfTracks} Songs'
-                                    .toString(),
-                                style: GoogleFonts.roboto(
-                                  color: Colors.grey.shade700,
-                                  fontSize: 9,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // GestureDetector(
-                        //   onTap: () {
-                      );
+                          onTap: () async {
+                            customNavigator(
+                              context: context,
+                              page: SongListScreen(
+                                  id: state.artists[index].id,
+                                  nullArtwork: "assets/images/artist.png",
+                                  title: state.artists[index].artist,
+                                  appbarTitle: "Artist",
+                                  type: ArtworkType.ARTIST,
+                                  audiosFromType: AudiosFromType.ARTIST_ID),
+                            );
+                          },
+                          child: GrideViewWidget(
+                            id: state.artists[index].id,
+                            name: state.artists[index].artist,
+                            numberofsong: state.artists[index].numberOfTracks!,
+                            type: ArtworkType.ARTIST,
+                            nullartwork: "assets/images/artist.png",
+                          ));
                     },
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
-      } else if (state is ArtistErrorState) {
-        return Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text("Please try again"),
-              const SizedBox(
-                height: 8,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    BlocProvider.of<ArtistBloc>(context).add(ArtistEvent());
-                  },
-                  child: const Text("retry")),
-            ],
-          ),
-        );
-      } else if (state is LoadArtistState) {
-        return Center(
-          child:
-              CircularProgressIndicator(color: Theme.of(context).primaryColor),
-        );
-      } else if (state is InitArtistState) {
-        return Center(
-          child:
-              CircularProgressIndicator(color: Theme.of(context).primaryColor),
-        );
-      } else {
-        return Center(
-          child: ElevatedButton(
-              onPressed: () {
-                BlocProvider.of<ArtistBloc>(context).add(ArtistEvent());
-              },
-              child: const Text("retry")),
-        );
-      }
-    });
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 80),
+                )
+              ],
+            ),
+          );
+        }
+        //------------------------------------------------------------------------------
+        //---------------- loding state ------------------------------------------------
+        else if (state is ArtistLoading) {
+          return const Loading();
+        }
+        //------------------------------------------------------------------------------
+        //----------------- empty state -----------------------------------------------
+        else if (state is ArtistEmpty) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  "assets/svg/error-icon.svg",
+                  // ignore: deprecated_member_use
+                  color: Theme.of(context).iconTheme.color,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  state.empty,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          );
+        }
+        //------------------------------------------------------------------------------
+        //------------------- error state ----------------------------------------------
+        else if (state is ArtistError) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  "assets/svg/error-icon.svg",
+                  // ignore: deprecated_member_use
+                  color: Theme.of(context).iconTheme.color,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  state.error,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondaryContainer,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16))),
+                    onPressed: () {
+                      BlocProvider.of<ArtistBloc>(context)
+                          .add(GetArtistEvent());
+                    },
+                    child: Text(
+                      "Try again",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )),
+              ],
+            ),
+          );
+        }
+        //------------------------------------------------------------------------------
+        //---------------- other state -------------------------------------------------
+        else {
+          return Center(
+            child: Column(
+              children: [
+                SvgPicture.asset(
+                  "assets/svg/error-icon.svg",
+                  // ignore: deprecated_member_use
+                  color: Theme.of(context).iconTheme.color,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "An unknown error occurred while loading albums",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8))),
+                    onPressed: () {
+                      BlocProvider.of<ArtistBloc>(context)
+                          .add(GetArtistEvent());
+                    },
+                    child: Text(
+                      "Try again",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )),
+              ],
+            ),
+          );
+        }
+        //------------------------------------------------------------------------------
+      }),
+    );
   }
 }
