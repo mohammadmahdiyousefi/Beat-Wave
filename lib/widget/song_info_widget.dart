@@ -34,10 +34,8 @@ Future<Widget?> songInfoBottomSheet(
         topRight: Radius.circular(25),
       ),
     ),
-    constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width -
-            32, // here increase or decrease in width
-        maxHeight: MediaQuery.of(context).size.height * 0.4),
+    constraints:
+        BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
     context: context,
     builder: (context) {
       return ClipRRect(
@@ -52,6 +50,7 @@ Future<Widget?> songInfoBottomSheet(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
               child: Text(
                 song.title,
+                style: Theme.of(context).listTileTheme.titleTextStyle,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -69,7 +68,8 @@ Future<Widget?> songInfoBottomSheet(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("${items.keys.toList()[index]}  : ",
-                        style: Theme.of(context).textTheme.bodySmall),
+                        style:
+                            Theme.of(context).listTileTheme.subtitleTextStyle),
                     const SizedBox(
                       width: 6,
                     ),
@@ -77,7 +77,7 @@ Future<Widget?> songInfoBottomSheet(
                       child: Text(
                         items.values.toList()[index].toString(),
                         overflow: TextOverflow.fade,
-                        style: Theme.of(context).appBarTheme.titleTextStyle,
+                        style: Theme.of(context).listTileTheme.titleTextStyle,
                       ),
                     ),
                   ],

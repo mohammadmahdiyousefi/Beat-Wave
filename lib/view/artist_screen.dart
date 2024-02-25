@@ -116,7 +116,7 @@ class ArtistScreen extends StatelessWidget {
                 ),
                 Text(
                   state.empty,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
@@ -140,24 +140,18 @@ class ArtistScreen extends StatelessWidget {
                 ),
                 Text(
                   state.error,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16))),
+                TextButton(
                     onPressed: () {
                       BlocProvider.of<ArtistBloc>(context)
                           .add(GetArtistEvent());
                     },
-                    child: Text(
+                    child: const Text(
                       "Try again",
-                      style: Theme.of(context).textTheme.bodyMedium,
                     )),
               ],
             ),
@@ -179,12 +173,12 @@ class ArtistScreen extends StatelessWidget {
                 ),
                 Text(
                   "An unknown error occurred while loading albums",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                ElevatedButton(
+                TextButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).primaryColor,
                         shape: RoundedRectangleBorder(
@@ -193,9 +187,8 @@ class ArtistScreen extends StatelessWidget {
                       BlocProvider.of<ArtistBloc>(context)
                           .add(GetArtistEvent());
                     },
-                    child: Text(
+                    child: const Text(
                       "Try again",
-                      style: Theme.of(context).textTheme.bodyMedium,
                     )),
               ],
             ),

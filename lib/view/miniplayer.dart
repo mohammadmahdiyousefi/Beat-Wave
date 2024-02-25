@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:justaudioplayer/data/model/positiondata.dart';
 import 'package:justaudioplayer/di/di.dart';
@@ -175,7 +176,7 @@ class Miniplayer extends StatelessWidget {
                                           thumbRadius: 0,
                                           total: positionData?.duration ??
                                               Duration.zero,
-                                          barHeight: 3,
+                                          barHeight: 2,
                                           thumbGlowRadius: 8,
                                           thumbCanPaintOutsideBar: false,
                                           timeLabelLocation:
@@ -219,18 +220,20 @@ class Miniplayer extends StatelessWidget {
         processingState == ProcessingState.buffering) {
       return Container(
         margin: const EdgeInsets.all(0.0),
-        width: 26.0,
-        height: 26.0,
+        width: 18.0,
+        height: 18.0,
         child: const CircularProgressIndicator(
           color: Colors.white,
         ),
       );
     } else if (playing != true) {
       return GestureDetector(
-        child: const Icon(
-          Icons.play_arrow,
+        child: SvgPicture.asset(
+          "assets/svg/play.svg",
+          // ignore: deprecated_member_use
           color: Colors.white,
-          size: 26,
+          height: 18,
+          width: 18,
         ),
         onTap: () {
           _player.play();
@@ -238,10 +241,12 @@ class Miniplayer extends StatelessWidget {
       );
     } else if (processingState != ProcessingState.completed) {
       return GestureDetector(
-        child: const Icon(
-          Icons.pause,
+        child: SvgPicture.asset(
+          "assets/svg/pause.svg",
+          // ignore: deprecated_member_use
           color: Colors.white,
-          size: 26,
+          height: 18,
+          width: 18,
         ),
         onTap: () {
           _player.pause();
@@ -249,10 +254,12 @@ class Miniplayer extends StatelessWidget {
       );
     } else {
       return GestureDetector(
-        child: const Icon(
-          Icons.replay,
+        child: SvgPicture.asset(
+          "assets/svg/replay.svg",
+          // ignore: deprecated_member_use
           color: Colors.white,
-          size: 26,
+          height: 18,
+          width: 18,
         ),
         onTap: () {
           _player.seek(Duration.zero);
@@ -264,10 +271,13 @@ class Miniplayer extends StatelessWidget {
   Widget _previousButton() {
     return _player.hasPrevious
         ? IconButton(
-            icon: const Icon(
-              Icons.skip_previous,
+            padding: const EdgeInsets.all(0),
+            icon: SvgPicture.asset(
+              "assets/svg/previous.svg",
+              // ignore: deprecated_member_use
               color: Colors.white,
-              size: 26,
+              height: 22,
+              width: 22,
             ),
             onPressed: _player.seekToPrevious,
           )
@@ -277,10 +287,13 @@ class Miniplayer extends StatelessWidget {
   Widget _nextButton() {
     return _player.hasNext
         ? IconButton(
-            icon: const Icon(
-              Icons.skip_next,
+            padding: const EdgeInsets.all(0),
+            icon: SvgPicture.asset(
+              "assets/svg/next.svg",
+              // ignore: deprecated_member_use
               color: Colors.white,
-              size: 26,
+              height: 22,
+              width: 22,
             ),
             onPressed: _player.seekToNext,
           )

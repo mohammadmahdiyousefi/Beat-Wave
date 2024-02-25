@@ -20,10 +20,6 @@ Future<Widget?> addtoplaylistbottomshet(
         topRight: Radius.circular(25),
       ),
     ),
-    constraints: BoxConstraints(
-      maxWidth: MediaQuery.of(context).size.width -
-          32, // here increase or decrease in width
-    ),
     context: context,
     builder: (context) {
       return BlocProvider(
@@ -188,7 +184,7 @@ class AddToPlaylistView extends StatelessWidget {
                               ),
                               Text(
                                 state.empty,
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
                           ),
@@ -211,29 +207,19 @@ class AddToPlaylistView extends StatelessWidget {
                                     ),
                                     Text(
                                       state.error,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
                                     ),
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                Theme.of(context).primaryColor,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8))),
+                                    TextButton(
                                         onPressed: () {
                                           BlocProvider.of<PlaylistBloc>(context)
                                               .add(GetPlaylistEvent());
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           "Try again",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
                                         )),
                                   ],
                                 ),
@@ -255,29 +241,19 @@ class AddToPlaylistView extends StatelessWidget {
                                     ),
                                     Text(
                                       "Error",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
                                     ),
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                Theme.of(context).primaryColor,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8))),
+                                    TextButton(
                                         onPressed: () {
                                           BlocProvider.of<PlaylistBloc>(context)
                                               .add(GetPlaylistEvent());
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           "Try again",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
                                         )),
                                   ],
                                 ),

@@ -22,11 +22,11 @@ class PlayerAudio {
           file.data,
           tag: MediaItem(
             id: file.id.toString(),
-            title: file.title,
+            title: file.displayNameWOExt,
             artist: file.artist,
             album: file.album,
             genre: file.genre,
-            displayTitle: file.displayNameWOExt,
+            displayTitle: file.title,
             duration: Duration(seconds: file.duration!),
             displayDescription: file.displayName,
             playable: true,

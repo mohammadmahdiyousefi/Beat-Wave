@@ -58,7 +58,7 @@ class FavoritScreen extends StatelessWidget {
                   ),
                   Text(
                     "Unfortunately, no favorite music was found",
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),

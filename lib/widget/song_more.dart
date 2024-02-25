@@ -22,10 +22,12 @@ Future<Widget?> moreBottomSheet(
       leading: SvgPicture.asset(
         "assets/svg/add-to-album-icon.svg",
         // ignore: deprecated_member_use
-        color: Theme.of(context).iconTheme.color,
+        color: Theme.of(context).iconTheme.color, height: 18,
+        width: 18,
       ),
-      title: const Text(
+      title: Text(
         "Add to playlist",
+        style: Theme.of(context).listTileTheme.titleTextStyle,
       ),
       onTap: () async {
         Navigator.pop(context);
@@ -37,10 +39,12 @@ Future<Widget?> moreBottomSheet(
       leading: SvgPicture.asset(
         "assets/svg/trash-icon.svg",
         // ignore: deprecated_member_use
-        color: Theme.of(context).iconTheme.color,
+        color: Theme.of(context).iconTheme.color, height: 18,
+        width: 18,
       ),
-      title: const Text(
+      title: Text(
         "Delete",
+        style: Theme.of(context).listTileTheme.titleTextStyle,
       ),
       onTap: () async {
         Navigator.pop(context);
@@ -52,10 +56,12 @@ Future<Widget?> moreBottomSheet(
       leading: SvgPicture.asset(
         "assets/svg/share-icon.svg",
         // ignore: deprecated_member_use
-        color: Theme.of(context).iconTheme.color,
+        color: Theme.of(context).iconTheme.color, height: 18,
+        width: 18,
       ),
-      title: const Text(
+      title: Text(
         "Share",
+        style: Theme.of(context).listTileTheme.titleTextStyle,
       ),
       onTap: () async {
         Navigator.pop(context);
@@ -68,10 +74,12 @@ Future<Widget?> moreBottomSheet(
       leading: SvgPicture.asset(
         "assets/svg/Group 8.svg",
         // ignore: deprecated_member_use
-        color: Theme.of(context).iconTheme.color,
+        color: Theme.of(context).iconTheme.color, height: 18,
+        width: 18,
       ),
-      title: const Text(
+      title: Text(
         "Properties",
+        style: Theme.of(context).listTileTheme.titleTextStyle,
       ),
       onTap: () async {
         Navigator.pop(context);
@@ -86,10 +94,8 @@ Future<Widget?> moreBottomSheet(
         topRight: Radius.circular(25),
       ),
     ),
-    constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width -
-            32, // here increase or decrease in width
-        maxHeight: MediaQuery.of(context).size.height * 0.4),
+    constraints:
+        BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
     context: context,
     builder: (context) {
       return Column(
@@ -180,10 +186,12 @@ Future<Widget?> morePlaylistBottomSheet(
       leading: SvgPicture.asset(
         "assets/svg/trash-icon.svg",
         // ignore: deprecated_member_use
-        color: Theme.of(context).iconTheme.color,
+        color: Theme.of(context).iconTheme.color, height: 18,
+        width: 18,
       ),
-      title: const Text(
+      title: Text(
         "Remove",
+        style: Theme.of(context).listTileTheme.titleTextStyle,
       ),
       onTap: () async {
         Navigator.pop(context);
@@ -200,10 +208,12 @@ Future<Widget?> morePlaylistBottomSheet(
       leading: SvgPicture.asset(
         "assets/svg/share-icon.svg",
         // ignore: deprecated_member_use
-        color: Theme.of(context).iconTheme.color,
+        color: Theme.of(context).iconTheme.color, height: 18,
+        width: 18,
       ),
-      title: const Text(
+      title: Text(
         "Share",
+        style: Theme.of(context).listTileTheme.titleTextStyle,
       ),
       onTap: () async {
         Navigator.pop(context);
@@ -216,10 +226,12 @@ Future<Widget?> morePlaylistBottomSheet(
       leading: SvgPicture.asset(
         "assets/svg/add-to-album-icon.svg",
         // ignore: deprecated_member_use
-        color: Theme.of(context).iconTheme.color,
+        color: Theme.of(context).iconTheme.color, height: 18,
+        width: 18,
       ),
-      title: const Text(
+      title: Text(
         "Properties",
+        style: Theme.of(context).listTileTheme.titleTextStyle,
       ),
       onTap: () async {
         Navigator.pop(context);
@@ -234,10 +246,8 @@ Future<Widget?> morePlaylistBottomSheet(
         topRight: Radius.circular(25),
       ),
     ),
-    constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width -
-            32, // here increase or decrease in width
-        maxHeight: MediaQuery.of(context).size.height * 0.4),
+    constraints:
+        BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
     context: context,
     builder: (context) {
       return Column(

@@ -115,7 +115,7 @@ class AlbumScreen extends StatelessWidget {
                 ),
                 Text(
                   state.empty,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
@@ -139,23 +139,17 @@ class AlbumScreen extends StatelessWidget {
                 ),
                 Text(
                   state.error,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16))),
+                TextButton(
                     onPressed: () {
                       BlocProvider.of<AlbumBloc>(context).add(GetAlbumEvent());
                     },
-                    child: Text(
+                    child: const Text(
                       "Try again",
-                      style: Theme.of(context).textTheme.bodyMedium,
                     )),
               ],
             ),
@@ -177,22 +171,17 @@ class AlbumScreen extends StatelessWidget {
                 ),
                 Text(
                   "An unknown error occurred while loading albums",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8))),
+                TextButton(
                     onPressed: () {
                       BlocProvider.of<AlbumBloc>(context).add(GetAlbumEvent());
                     },
-                    child: Text(
+                    child: const Text(
                       "Try again",
-                      style: Theme.of(context).textTheme.bodyMedium,
                     )),
               ],
             ),

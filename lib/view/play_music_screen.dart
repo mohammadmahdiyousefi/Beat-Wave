@@ -96,7 +96,7 @@ class PlayMusicScreen extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical:
-                                  MediaQuery.of(context).size.height * 0.09),
+                                  MediaQuery.of(context).size.height * 0.08),
                           child: QueryArtworkWidget(
                             id: info.id,
                             quality: 60,
@@ -130,49 +130,34 @@ class PlayMusicScreen extends StatelessWidget {
                       //  music ArtWork //
 //------------------------------------------------------------------------------
                       // music displayName //
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 17, right: 17, bottom: 10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    info.title,
-                                    style: Theme.of(context)
-                                        .listTileTheme
-                                        .titleTextStyle!
-                                        .copyWith(color: Colors.white),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-
-                                  //------------------------------------------------------------------------------
-                                  Text(
-                                    info.artist ?? "<unknown>",
-                                    style: Theme.of(context)
-                                        .listTileTheme
-                                        .subtitleTextStyle,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 6,
-                            ),
-                            StreamBuilder<bool>(
-                              stream: _player.shuffleModeEnabledStream,
-                              initialData: _player.shuffleModeEnabled,
-                              builder: (context, snapshot) {
-                                return _shuffleButton(
-                                    context, snapshot.data ?? false);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
+                      ListTile(
+                          horizontalTitleGap: 3,
+                          title: Text(
+                            info.title,
+                            style: Theme.of(context)
+                                .listTileTheme
+                                .titleTextStyle!
+                                .copyWith(color: Colors.white),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          titleTextStyle: Theme.of(context)
+                              .listTileTheme
+                              .titleTextStyle!
+                              .copyWith(color: Colors.white),
+                          subtitle: Text(
+                            info.artist ?? "<unknown>",
+                            style: Theme.of(context)
+                                .listTileTheme
+                                .subtitleTextStyle,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitleTextStyle:
+                              Theme.of(context).listTileTheme.subtitleTextStyle,
+                          trailing: FavoritButton(
+                            song: info,
+                            color: Colors.white,
+                            size: 26,
+                          )),
 //------------------------------------------------------------------------------
                       // music player handeler //
                       StreamBuilder<PositionData>(
@@ -197,8 +182,8 @@ class PlayMusicScreen extends StatelessWidget {
                                     .sliderTheme
                                     .activeTrackColor!
                                     .withOpacity(0.3),
-                                thumbRadius: 7,
-                                barHeight: 4,
+                                thumbRadius: 8,
+                                barHeight: 5,
                                 thumbGlowRadius: 8,
                                 timeLabelPadding: 6,
                                 thumbCanPaintOutsideBar: true,
@@ -230,12 +215,12 @@ class PlayMusicScreen extends StatelessWidget {
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            StreamBuilder<LoopMode>(
-                              stream: _player.loopModeStream,
-                              initialData: _player.loopMode,
+                            StreamBuilder<bool>(
+                              stream: _player.shuffleModeEnabledStream,
+                              initialData: _player.shuffleModeEnabled,
                               builder: (context, snapshot) {
-                                return _repeatButton(
-                                    context, snapshot.data ?? LoopMode.off);
+                                return _shuffleButton(
+                                    context, snapshot.data ?? false);
                               },
                             ),
                             _previousButton(),
@@ -244,21 +229,18 @@ class PlayMusicScreen extends StatelessWidget {
                               initialData: _player.playerState,
                               builder: (context, snapshot) {
                                 final PlayerState? playerState = snapshot.data;
-                                return Container(
-                                    height: 55,
-                                    width: 55,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor,
-                                      borderRadius: BorderRadius.circular(100),
-                                    ),
-                                    child: _playerButton(playerState));
+                                return _playerButton(context, playerState);
                               },
                             ),
                             _nextButton(),
-                            FavoritButton(
-                              song: info,
-                              size: 27,
-                            )
+                            StreamBuilder<LoopMode>(
+                              stream: _player.loopModeStream,
+                              initialData: _player.loopMode,
+                              builder: (context, snapshot) {
+                                return _repeatButton(
+                                    context, snapshot.data ?? LoopMode.off);
+                              },
+                            ),
                           ]),
 //------------------------------------------------------------------------------
                       const SizedBox(
@@ -278,8 +260,8 @@ class PlayMusicScreen extends StatelessWidget {
   }
 
   Future<Widget?> _moreBottomSheet(
-    BuildContext context,
-    SongModel song,
+    final BuildContext context,
+    final SongModel song,
   ) {
     final OnAudioQuery onAudioQuery = locator.get<OnAudioQuery>();
     final List<Widget> items = [
@@ -288,10 +270,12 @@ class PlayMusicScreen extends StatelessWidget {
         leading: SvgPicture.asset(
           "assets/svg/add-to-album-icon.svg",
           // ignore: deprecated_member_use
-          color: Theme.of(context).iconTheme.color,
+          color: Theme.of(context).iconTheme.color, height: 18,
+          width: 18,
         ),
-        title: const Text(
+        title: Text(
           "Add to playlist",
+          style: Theme.of(context).listTileTheme.titleTextStyle,
         ),
         onTap: () async {
           Navigator.pop(context);
@@ -301,12 +285,32 @@ class PlayMusicScreen extends StatelessWidget {
       ListTile(
         horizontalTitleGap: 6,
         leading: SvgPicture.asset(
-          "assets/svg/share-icon.svg",
+          "assets/svg/speedometer.svg",
           // ignore: deprecated_member_use
           color: Theme.of(context).iconTheme.color,
+          height: 18,
+          width: 18,
         ),
-        title: const Text(
+        title: Text(
+          "Play Speed",
+          style: Theme.of(context).listTileTheme.titleTextStyle,
+        ),
+        onTap: () async {
+          Navigator.pop(context);
+          await _playSpeedBottomSheet(context);
+        },
+      ),
+      ListTile(
+        horizontalTitleGap: 6,
+        leading: SvgPicture.asset(
+          "assets/svg/share-icon.svg",
+          // ignore: deprecated_member_use
+          color: Theme.of(context).iconTheme.color, height: 18,
+          width: 18,
+        ),
+        title: Text(
           "Share",
+          style: Theme.of(context).listTileTheme.titleTextStyle,
         ),
         onTap: () async {
           Navigator.pop(context);
@@ -319,10 +323,12 @@ class PlayMusicScreen extends StatelessWidget {
         leading: SvgPicture.asset(
           "assets/svg/Group 8.svg",
           // ignore: deprecated_member_use
-          color: Theme.of(context).iconTheme.color,
+          color: Theme.of(context).iconTheme.color, height: 18,
+          width: 18,
         ),
-        title: const Text(
+        title: Text(
           "Properties",
+          style: Theme.of(context).listTileTheme.titleTextStyle,
         ),
         onTap: () async {
           Navigator.pop(context);
@@ -337,10 +343,8 @@ class PlayMusicScreen extends StatelessWidget {
           topRight: Radius.circular(25),
         ),
       ),
-      constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width -
-              32, // here increase or decrease in width
-          maxHeight: MediaQuery.of(context).size.height * 0.4),
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
       context: context,
       builder: (context) {
         return Column(
@@ -351,9 +355,15 @@ class PlayMusicScreen extends StatelessWidget {
               child: ListTile(
                 shape: Theme.of(context).listTileTheme.shape,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 7),
-                title: Text(song.title),
+                title: Text(
+                  song.title,
+                  style: Theme.of(context).listTileTheme.titleTextStyle,
+                ),
                 titleTextStyle: Theme.of(context).listTileTheme.titleTextStyle,
-                subtitle: Text(song.artist ?? "<unkown>"),
+                subtitle: Text(
+                  song.artist ?? "<unkown>",
+                  style: Theme.of(context).listTileTheme.subtitleTextStyle,
+                ),
                 subtitleTextStyle:
                     Theme.of(context).listTileTheme.subtitleTextStyle,
                 trailing: FavoritButton(
@@ -417,58 +427,168 @@ class PlayMusicScreen extends StatelessWidget {
     );
   }
 
-  Widget _playerButton(PlayerState? playerState) {
+  Future<Widget?> _playSpeedBottomSheet(
+    final BuildContext context,
+  ) {
+    return showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+      ),
+      context: context,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              height: 8,
+            ),
+            const Text(
+              "Play Speed",
+            ),
+            const Divider(
+              indent: 16,
+              endIndent: 16,
+              thickness: 1,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            StreamBuilder<double>(
+                stream: _player.speedStream,
+                initialData: _player.speed,
+                builder: (context, snapshot) {
+                  final double? speed = snapshot.data;
+                  return Column(
+                    children: [
+                      Text("Speed : ${speed?.toStringAsFixed(2) ?? "1.0"} x"),
+                      Slider(
+                        value: speed ?? 0.5,
+                        min: 0.25,
+                        max: 2,
+                        onChanged: (value) {
+                          _player.setSpeed(value);
+                        },
+                      ),
+                    ],
+                  );
+                }),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                    onPressed: () => _player.setSpeed(0.25),
+                    child: const Text("0.25x")),
+                TextButton(
+                    onPressed: () => _player.setSpeed(0.5),
+                    child: const Text("0.5x")),
+                TextButton(
+                    onPressed: () => _player.setSpeed(1),
+                    child: const Text("Normal")),
+                TextButton(
+                    onPressed: () => _player.setSpeed(1.5),
+                    child: const Text("1.5x")),
+                TextButton(
+                    onPressed: () => _player.setSpeed(2),
+                    child: const Text("2.0x")),
+              ],
+            ),
+            const SizedBox(
+              height: 16,
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _playerButton(
+      final BuildContext context, final PlayerState? playerState) {
     final ProcessingState processingState =
         playerState?.processingState ?? ProcessingState.loading;
     final bool playing = playerState?.playing ?? false;
 
-    if (processingState == ProcessingState.loading ||
-        processingState == ProcessingState.buffering) {
-      return const CircularProgressIndicator(
-        color: Colors.white,
-      );
-    } else if (playing != true) {
-      return GestureDetector(
-        child: const Icon(
-          Icons.play_arrow,
-          color: Colors.white,
-          size: 30,
-        ),
-        onTap: () {
-          _player.play();
-        },
-      );
-    } else if (processingState != ProcessingState.completed) {
-      return GestureDetector(
-        child: const Icon(
-          Icons.pause,
-          color: Colors.white,
-          size: 30,
-        ),
-        onTap: () {
-          _player.pause();
-        },
-      );
-    } else {
-      return GestureDetector(
-        child: const Icon(
-          Icons.replay,
-          color: Colors.white,
-          size: 30,
-        ),
-        onTap: () {
-          _player.seek(Duration.zero);
-        },
-      );
-    }
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+            height: 55,
+            width: 55,
+            padding: const EdgeInsets.all(0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: (playing != true)
+                ? IconButton(
+                    padding: const EdgeInsets.only(left: 4),
+                    icon: SvgPicture.asset(
+                      "assets/svg/play.svg",
+                      // ignore: deprecated_member_use
+                      color: Colors.white,
+                      height: 26,
+                      width: 26,
+                    ),
+                    onPressed: () {
+                      _player.play();
+                    },
+                  )
+                : (processingState != ProcessingState.completed)
+                    ? IconButton(
+                        icon: SvgPicture.asset(
+                          "assets/svg/pause.svg",
+                          // ignore: deprecated_member_use
+                          color: Colors.white,
+                          height: 26,
+                          width: 26,
+                        ),
+                        onPressed: () {
+                          _player.pause();
+                        },
+                      )
+                    : IconButton(
+                        icon: SvgPicture.asset(
+                          "assets/svg/replay.svg",
+                          // ignore: deprecated_member_use
+                          color: Colors.white,
+                          height: 26,
+                          width: 26,
+                        ),
+                        onPressed: () {
+                          _player.seek(Duration.zero);
+                        },
+                      )),
+        if (processingState == ProcessingState.loading ||
+            processingState == ProcessingState.buffering) ...{
+          SizedBox(
+            height: 62,
+            width: 62,
+            child: CircularProgressIndicator(
+              color: Theme.of(context).primaryColor,
+              strokeWidth: 4,
+            ),
+          )
+        } else ...{
+          const SizedBox(
+            height: 62,
+            width: 62,
+          )
+        }
+      ],
+    );
   }
 
   Widget _previousButton() {
     return IconButton(
-      icon: const Icon(
-        Icons.skip_previous,
+      padding: const EdgeInsets.all(0),
+      icon: SvgPicture.asset(
+        "assets/svg/previous.svg",
+        // ignore: deprecated_member_use
         color: Colors.white,
-        size: 35,
+        height: 32,
+        width: 32,
       ),
       onPressed: _player.hasPrevious ? _player.seekToPrevious : null,
     );
@@ -476,23 +596,28 @@ class PlayMusicScreen extends StatelessWidget {
 
   Widget _nextButton() {
     return IconButton(
-      icon: const Icon(
-        Icons.skip_next,
+      padding: const EdgeInsets.all(0),
+      icon: SvgPicture.asset(
+        "assets/svg/next.svg",
+        // ignore: deprecated_member_use
         color: Colors.white,
-        size: 35,
+        height: 32,
+        width: 32,
       ),
       onPressed: _player.hasNext ? _player.seekToNext : null,
     );
   }
 
-  Widget _shuffleButton(BuildContext context, bool isEnabled) {
+  Widget _shuffleButton(final BuildContext context, final bool isEnabled) {
     return IconButton(
-      icon: isEnabled
-          ? Icon(Icons.shuffle, color: Theme.of(context).primaryColor)
-          : const Icon(
-              Icons.shuffle,
-              color: Colors.white,
-            ),
+      padding: const EdgeInsets.all(0),
+      icon: SvgPicture.asset(
+        "assets/svg/shuffle.svg",
+        // ignore: deprecated_member_use
+        color: isEnabled ? Theme.of(context).primaryColor : Colors.white,
+        height: 22,
+        width: 22,
+      ),
       onPressed: () async {
         final enable = !isEnabled;
         if (enable) {
@@ -503,15 +628,29 @@ class PlayMusicScreen extends StatelessWidget {
     );
   }
 
-  Widget _repeatButton(BuildContext context, LoopMode loopMode) {
+  Widget _repeatButton(final BuildContext context, final LoopMode loopMode) {
     final icons = [
-      const Icon(
-        Icons.repeat,
+      SvgPicture.asset(
+        "assets/svg/repeat.svg",
+        // ignore: deprecated_member_use
         color: Colors.white,
-        size: 26,
+        height: 36,
+        width: 36,
       ),
-      Icon(Icons.repeat, color: Theme.of(context).primaryColor),
-      Icon(Icons.repeat_one, color: Theme.of(context).primaryColor),
+      SvgPicture.asset(
+        "assets/svg/repeat.svg",
+        // ignore: deprecated_member_use
+        color: Theme.of(context).primaryColor,
+        height: 36,
+        width: 36,
+      ),
+      SvgPicture.asset(
+        "assets/svg/repeat-one.svg",
+        // ignore: deprecated_member_use
+        color: Theme.of(context).primaryColor,
+        height: 36,
+        width: 36,
+      )
     ];
     const cycleModes = [
       LoopMode.off,
@@ -520,6 +659,7 @@ class PlayMusicScreen extends StatelessWidget {
     ];
     final index = cycleModes.indexOf(loopMode);
     return IconButton(
+      padding: const EdgeInsets.all(0),
       icon: icons[index],
       onPressed: () {
         _player.setLoopMode(

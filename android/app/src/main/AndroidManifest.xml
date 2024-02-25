@@ -22,7 +22,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:usesCleartextTraffic="true"
-        android:label="BeatWave"
+        android:label="Beat Wave"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

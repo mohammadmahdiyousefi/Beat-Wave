@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -28,7 +29,19 @@ class AboutScreen extends StatelessWidget {
             child: ListTile(
               title: const Text("Version"),
               subtitle: const Text("Tap to check for update"),
-              trailing: const Text("v0.0.1"),
+              trailing: FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.done:
+                      return Text(
+                        'v${snapshot.data?.version ?? 0}',
+                      );
+                    default:
+                      return const SizedBox();
+                  }
+                },
+              ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onTap: () {},

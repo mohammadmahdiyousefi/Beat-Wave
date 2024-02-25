@@ -210,9 +210,8 @@ class PlayListScreen extends StatelessWidget {
                                     ),
                                     Text(
                                       state.empty,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
                                     ),
                                   ],
                                 ),
@@ -240,30 +239,19 @@ class PlayListScreen extends StatelessWidget {
                                             state.error,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodyMedium,
+                                                .bodySmall,
                                           ),
                                           const SizedBox(
                                             height: 10,
                                           ),
-                                          ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .primaryColor,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8))),
+                                          TextButton(
                                               onPressed: () {
                                                 BlocProvider.of<PlaylistBloc>(
                                                         context)
                                                     .add(GetPlaylistEvent());
                                               },
-                                              child: Text(
+                                              child: const Text(
                                                 "try agine",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
                                               )),
                                         ],
                                       ),
@@ -290,30 +278,19 @@ class PlayListScreen extends StatelessWidget {
                                             "Error",
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodyMedium,
+                                                .bodySmall,
                                           ),
                                           const SizedBox(
                                             height: 10,
                                           ),
-                                          ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .primaryColor,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8))),
+                                          TextButton(
                                               onPressed: () {
                                                 BlocProvider.of<PlaylistBloc>(
                                                         context)
                                                     .add(GetPlaylistEvent());
                                               },
-                                              child: Text(
+                                              child: const Text(
                                                 "Try again",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
                                               )),
                                         ],
                                       ),

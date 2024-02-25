@@ -54,7 +54,7 @@ class SongListScreen extends StatelessWidget {
                         .appBarTheme
                         .titleTextStyle!
                         .copyWith(color: Colors.white),
-                    toolbarTextStyle: Theme.of(context).textTheme.bodyMedium,
+                    toolbarTextStyle: Theme.of(context).textTheme.bodySmall,
                     elevation: 3,
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     collapsedHeight: MediaQuery.of(context).size.height * 0.4,
@@ -186,7 +186,7 @@ class SongListScreen extends StatelessWidget {
                             ),
                             Text(
                               state.empty,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],
                         ),
@@ -210,27 +210,19 @@ class SongListScreen extends StatelessWidget {
                             ),
                             Text(
                               state.error,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                             const SizedBox(
                               height: 10,
                             ),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(16))),
+                            TextButton(
                                 onPressed: () {
                                   BlocProvider.of<SongBloc>(context).add(
                                       GetSongListEvent(
                                           id, audiosFromType, path));
                                 },
-                                child: Text(
+                                child: const Text(
                                   "Try again",
-                                  style: Theme.of(context).textTheme.bodyMedium,
                                 )),
                           ],
                         ),
@@ -257,27 +249,19 @@ class SongListScreen extends StatelessWidget {
                             ),
                             Text(
                               "An unknown error occurred",
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                             const SizedBox(
                               height: 10,
                             ),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(16))),
+                            TextButton(
                                 onPressed: () {
                                   BlocProvider.of<SongBloc>(context).add(
                                       GetSongListEvent(
                                           id, audiosFromType, path));
                                 },
-                                child: Text(
+                                child: const Text(
                                   "Try again",
-                                  style: Theme.of(context).textTheme.bodyMedium,
                                 )),
                           ],
                         ),

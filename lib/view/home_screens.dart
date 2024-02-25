@@ -439,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           Text(
                             state.empty,
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
                       ),
@@ -466,9 +466,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           Text(
                             state.error,
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
-                          ElevatedButton(
+                          TextButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: Theme.of(context)
                                       .colorScheme
@@ -479,9 +479,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 BlocProvider.of<AllSongBloc>(context)
                                     .add(GetAllSong());
                               },
-                              child: Text(
+                              child: const Text(
                                 "Try again",
-                                style: Theme.of(context).textTheme.bodyMedium,
                               )),
                         ],
                       ),
@@ -508,12 +507,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           Text(
                             "An unknown error occurred",
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          ElevatedButton(
+                          TextButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       Theme.of(context).primaryColor,
@@ -523,9 +522,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 BlocProvider.of<AllSongBloc>(context)
                                     .add(GetAllSong());
                               },
-                              child: Text(
+                              child: const Text(
                                 "Try again",
-                                style: Theme.of(context).textTheme.bodyMedium,
                               )),
                         ],
                       ),

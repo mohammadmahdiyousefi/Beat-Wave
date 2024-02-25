@@ -5,23 +5,23 @@ class CustomTheme {
       useMaterial3: true,
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
-            fontFamily: "ISW",
+            fontFamily: "ROBM",
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.white),
         headlineMedium: TextStyle(
-            fontFamily: "ISW",
+            fontFamily: "ROBM",
             fontSize: 12,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             color: Colors.white),
         bodySmall: TextStyle(
-          fontFamily: "ISW",
+          fontFamily: "ROBM",
           fontSize: 11,
           fontWeight: FontWeight.w300,
           color: Color(0xff8E8E8E),
         ),
         labelSmall: TextStyle(
-          fontFamily: "ISW",
+          fontFamily: "ROBR",
           fontSize: 11,
           fontWeight: FontWeight.w300,
           color: Colors.white,
@@ -30,14 +30,14 @@ class CustomTheme {
       listTileTheme: ListTileThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         titleTextStyle: const TextStyle(
-            fontFamily: "ISW",
-            fontSize: 13,
+            fontFamily: "ROBR",
+            fontSize: 14,
             fontWeight: FontWeight.w400,
             overflow: TextOverflow.ellipsis,
             color: Color(0xffF4F4F4)),
         subtitleTextStyle: const TextStyle(
-            fontFamily: "ISW",
-            fontSize: 11,
+            fontFamily: "ROBR",
+            fontSize: 12,
             fontWeight: FontWeight.w300,
             overflow: TextOverflow.ellipsis,
             color: Color(0xff8E8E8E)),
@@ -45,14 +45,14 @@ class CustomTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xff121212),
         titleTextStyle: TextStyle(
-            fontFamily: "ISW",
-            fontSize: 13,
+            fontFamily: "ROBR",
+            fontSize: 14,
             fontWeight: FontWeight.w300,
             color: Color(0xffF4F4F4)),
       ),
       popupMenuTheme: const PopupMenuThemeData(
         textStyle: TextStyle(
-          fontFamily: "ISW",
+          fontFamily: "ROBR",
           fontSize: 11,
           fontWeight: FontWeight.w300,
           color: Colors.white,
@@ -63,9 +63,9 @@ class CustomTheme {
         activeTrackColor: Color(0xFF2748EE),
         secondaryActiveTrackColor: Color.fromARGB(255, 142, 142, 142),
         valueIndicatorTextStyle: TextStyle(
-          fontFamily: "ISW",
-          fontSize: 11,
-          fontWeight: FontWeight.w400,
+          fontFamily: "ROBR",
+          fontSize: 13,
+          fontWeight: FontWeight.w300,
           color: Color.fromARGB(
             255,
             244,
@@ -84,22 +84,22 @@ class CustomTheme {
       useMaterial3: true,
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
-            fontFamily: "ISW",
+            fontFamily: "ROBM",
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.black),
         headlineMedium: TextStyle(
-            fontFamily: "ISW",
+            fontFamily: "ROBM",
             fontSize: 12,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             color: Colors.white),
         bodySmall: TextStyle(
-            fontFamily: "ISW",
+            fontFamily: "ROBM",
             fontSize: 11,
             fontWeight: FontWeight.w300,
             color: Color(0xff8E8E8E)),
         labelSmall: TextStyle(
-          fontFamily: "ISW",
+          fontFamily: "ROBR",
           fontSize: 11,
           fontWeight: FontWeight.w300,
           color: Colors.black,
@@ -108,14 +108,14 @@ class CustomTheme {
       listTileTheme: ListTileThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         titleTextStyle: const TextStyle(
-            fontFamily: "ISW",
-            fontSize: 13,
+            fontFamily: "ROBR",
+            fontSize: 14,
             fontWeight: FontWeight.w400,
             overflow: TextOverflow.ellipsis,
             color: Color(0xff000000)),
         subtitleTextStyle: const TextStyle(
-            fontFamily: "ISW",
-            fontSize: 11,
+            fontFamily: "ROBR",
+            fontSize: 12,
             fontWeight: FontWeight.w300,
             overflow: TextOverflow.ellipsis,
             color: Color(0xff8E8E8E)),
@@ -123,14 +123,14 @@ class CustomTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xffF4F4F4),
         titleTextStyle: TextStyle(
-            fontFamily: "ISW",
-            fontSize: 13,
+            fontFamily: "ROBR",
+            fontSize: 14,
             fontWeight: FontWeight.w300,
             color: Color(0xff000000)),
       ),
       popupMenuTheme: const PopupMenuThemeData(
         textStyle: TextStyle(
-          fontFamily: "ISW",
+          fontFamily: "ROBR",
           fontSize: 11,
           fontWeight: FontWeight.w300,
           color: Colors.black,
@@ -141,9 +141,9 @@ class CustomTheme {
         activeTrackColor: Color(0xFF2748EE),
         secondaryActiveTrackColor: Color.fromARGB(255, 142, 142, 142),
         valueIndicatorTextStyle: TextStyle(
-          fontFamily: "ISW",
-          fontSize: 11,
-          fontWeight: FontWeight.w400,
+          fontFamily: "ROBR",
+          fontSize: 13,
+          fontWeight: FontWeight.w300,
           color: Color.fromARGB(
             255,
             244,
