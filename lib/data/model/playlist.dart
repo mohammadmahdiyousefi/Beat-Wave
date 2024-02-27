@@ -23,4 +23,10 @@ class PlayListHandler {
         await _audioQuery.removeFromPlaylist(playlistId, audioId);
     return isDeleted;
   }
+
+  static Future<bool> renamePlaylist(int playlistId, String newName) async {
+    final bool isDeleted =
+        await _audioQuery.renamePlaylist(playlistId, newName);
+    return isDeleted;
+  }
 }

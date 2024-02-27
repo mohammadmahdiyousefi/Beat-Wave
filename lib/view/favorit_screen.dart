@@ -11,7 +11,7 @@ import '../widget/song_tile.dart';
 class FavoritScreen extends StatelessWidget {
   FavoritScreen({super.key});
 
-  final Box favoritebox = Hive.box('FavoriteSongs');
+  final Box<String> favoritebox = Hive.box<String>('FavoriteSongs');
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -14,6 +14,8 @@ Future<Widget?> addtoplaylistbottomshet(
   SongModel song,
 ) {
   return showModalBottomSheet(
+    elevation: 0,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(25),
@@ -69,100 +71,101 @@ class AddToPlaylistView extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: ListTile(
-                          onTap: () async {
-                            await PlayListHandler.addToPlaylist(
-                                    state.playlist[index].id, song.id)
-                                .then((value) {
-                              if (value) {
-                                BlocProvider.of<PlaylistBloc>(context)
-                                    .add(GetPlaylistEvent());
-                              } else {}
-                            });
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 7),
-                          title: Text(
-                            state.playlist[index].playlist,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          titleTextStyle:
-                              Theme.of(context).listTileTheme.titleTextStyle,
-                          subtitle: Text(
-                            "${state.playlist[index].numOfSongs} ${state.playlist[index].numOfSongs <= 1 ? "song" : "songs"}",
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitleTextStyle:
-                              Theme.of(context).listTileTheme.subtitleTextStyle,
-                          leading: QueryArtworkWidget(
-                            id: state.playlist[index].id,
-                            quality: 50,
-                            size: 200,
-                            format: ArtworkFormat.JPEG,
-                            type: ArtworkType.PLAYLIST,
-                            keepOldArtwork: true,
-                            artworkBorder: BorderRadius.circular(6),
-                            artworkQuality: FilterQuality.low,
-                            artworkFit: BoxFit.fill,
-                            artworkHeight: 50,
-                            artworkWidth: 50,
-                            nullArtworkWidget: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                image: const DecorationImage(
-                                    image: AssetImage(
-                                      "assets/images/song.png",
-                                    ),
-                                    filterQuality: FilterQuality.low,
-                                    fit: BoxFit.cover),
-                                color: const Color.fromARGB(255, 61, 60, 60),
-                              ),
-                            ),
-                          ),
-                          trailing: PopupMenuButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16)),
-                            icon: const Icon(
-                              Icons.more_horiz,
-                              size: 30,
-                            ),
-                            itemBuilder: (context) {
-                              return [
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    PlayListHandler.removePlaylist(
-                                            state.playlist[index].id)
-                                        .then((value) {
-                                      if (value) {
-                                        BlocProvider.of<PlaylistBloc>(context)
-                                            .add(GetPlaylistEvent());
-                                      } else {}
-                                    });
-                                  },
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                          "assets/svg/trash-icon.svg",
-                                          // ignore: deprecated_member_use
-                                          color: Theme.of(context)
-                                              .iconTheme
-                                              .color),
-                                      const SizedBox(
-                                        width: 9,
-                                      ),
-                                      Text("Delete",
-                                          style: Theme.of(context)
-                                              .popupMenuTheme
-                                              .textStyle),
-                                    ],
+                        onTap: () async {
+                          await PlayListHandler.addToPlaylist(
+                                  state.playlist[index].id, song.id)
+                              .then((value) {
+                            if (value) {
+                              BlocProvider.of<PlaylistBloc>(context)
+                                  .add(GetPlaylistEvent());
+                            } else {}
+                          });
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 7),
+                        title: Text(
+                          state.playlist[index].playlist,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        titleTextStyle:
+                            Theme.of(context).listTileTheme.titleTextStyle,
+                        subtitle: Text(
+                          "${state.playlist[index].numOfSongs} ${state.playlist[index].numOfSongs <= 1 ? "song" : "songs"}",
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitleTextStyle:
+                            Theme.of(context).listTileTheme.subtitleTextStyle,
+                        leading: QueryArtworkWidget(
+                          id: state.playlist[index].id,
+                          quality: 50,
+                          size: 200,
+                          format: ArtworkFormat.JPEG,
+                          type: ArtworkType.PLAYLIST,
+                          keepOldArtwork: true,
+                          artworkBorder: BorderRadius.circular(6),
+                          artworkQuality: FilterQuality.low,
+                          artworkFit: BoxFit.fill,
+                          artworkHeight: 50,
+                          artworkWidth: 50,
+                          nullArtworkWidget: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              image: const DecorationImage(
+                                  image: AssetImage(
+                                    "assets/images/song.png",
                                   ),
-                                )
-                              ];
-                            },
-                          )),
+                                  filterQuality: FilterQuality.low,
+                                  fit: BoxFit.cover),
+                              color: const Color.fromARGB(255, 61, 60, 60),
+                            ),
+                          ),
+                        ),
+                        // trailing: PopupMenuButton(
+                        //   shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(16)),
+                        //   icon: const Icon(
+                        //     Icons.more_horiz,
+                        //     size: 30,
+                        //   ),
+                        //   itemBuilder: (context) {
+                        //     return [
+                        //       PopupMenuItem(
+                        //         onTap: () async {
+                        //           PlayListHandler.removePlaylist(
+                        //                   state.playlist[index].id)
+                        //               .then((value) {
+                        //             if (value) {
+                        //               BlocProvider.of<PlaylistBloc>(context)
+                        //                   .add(GetPlaylistEvent());
+                        //             } else {}
+                        //           });
+                        //         },
+                        //         child: Row(
+                        //           children: [
+                        //             SvgPicture.asset(
+                        //                 "assets/svg/trash-icon.svg",
+                        //                 // ignore: deprecated_member_use
+                        //                 color: Theme.of(context)
+                        //                     .iconTheme
+                        //                     .color),
+                        //             const SizedBox(
+                        //               width: 9,
+                        //             ),
+                        //             Text("Delete",
+                        //                 style: Theme.of(context)
+                        //                     .popupMenuTheme
+                        //                     .textStyle),
+                        //           ],
+                        //         ),
+                        //       )
+                        //     ];
+                        //   },
+                        // )
+                      ),
                     );
                   })
               : (state is PlayListLoading)

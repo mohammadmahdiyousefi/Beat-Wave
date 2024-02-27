@@ -30,9 +30,9 @@ class Miniplayer extends StatelessWidget {
         stream: _player.sequenceStateStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final SequenceState? sequenceState = snapshot.data;
-            final SongModel info =
-                SongModel(sequenceState!.currentSource?.tag.extras ?? {});
+            final SequenceState sequenceState = snapshot.data!;
+            final SongModel info = SongModel(
+                sequenceState.currentSource?.tag.extras["SongModel"] ?? {});
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: GestureDetector(
@@ -66,7 +66,7 @@ class Miniplayer extends StatelessWidget {
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Container(
-                      height: 64,
+                      height: 66,
                       padding: const EdgeInsets.only(left: 7, right: 7),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
@@ -107,7 +107,6 @@ class Miniplayer extends StatelessWidget {
 //--------------------------- song Artwork -------------------------------------
 //------------------------------------------------------------------------------
                           Expanded(
-                            flex: 1,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 7, right: 7),
                               child: Column(
@@ -130,6 +129,9 @@ class Miniplayer extends StatelessWidget {
                                                   .copyWith(
                                                       color: Colors.white),
                                               overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(
+                                              height: 2,
                                             ),
                                             Text(
                                               info.artist ?? "<unknown>",
@@ -158,10 +160,12 @@ class Miniplayer extends StatelessWidget {
                                       _nextButton()
                                     ],
                                   ),
-
+                                  const SizedBox(
+                                    height: 2,
+                                  ),
 //-------------------- song controler play next and Previous bottun-------------
 //------------------------------------------------------------------------------
-                                  //----------------------------- song progress bar ------------------------------
+////----------------------------- song progress bar ------------------------------
                                   StreamBuilder<PositionData>(
                                       stream: _positionDataStream,
                                       initialData: PositionData(

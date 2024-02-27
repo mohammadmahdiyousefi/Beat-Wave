@@ -19,7 +19,7 @@ void main() async {
       preloadArtwork: true);
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await Hive.openBox('FavoriteSongs');
+  await Hive.openBox<String>('FavoriteSongs');
   await Hive.openBox('ThemeMode');
   await getItInit();
   runApp(const MyApp());

@@ -88,85 +88,98 @@ Future<Widget?> moreBottomSheet(
     ),
   ];
   return showModalBottomSheet(
+    elevation: 0,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(25),
         topRight: Radius.circular(25),
       ),
     ),
-    constraints:
-        BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
     context: context,
     builder: (context) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-            child: ListTile(
-              shape: Theme.of(context).listTileTheme.shape,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 7),
-              title: Text(song.title),
-              titleTextStyle: Theme.of(context).listTileTheme.titleTextStyle,
-              subtitle: Text(song.artist ?? "<unkown>"),
-              subtitleTextStyle:
-                  Theme.of(context).listTileTheme.subtitleTextStyle,
-              trailing: FavoritButton(
-                song: song,
-                color: Theme.of(context).iconTheme.color ?? Colors.grey,
-              ),
-              leading: Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    image: const DecorationImage(
-                        image: AssetImage("assets/images/cover.jpg"))),
-                child: QueryArtworkWidget(
-                  id: song.id,
-                  quality: 50,
-                  size: 200,
-                  controller: onAudioQuery,
-                  format: ArtworkFormat.JPEG,
-                  type: ArtworkType.AUDIO,
-                  keepOldArtwork: false,
-                  artworkBorder: BorderRadius.circular(6),
-                  artworkQuality: FilterQuality.low,
-                  artworkFit: BoxFit.fill,
-                  artworkHeight: 50,
-                  artworkWidth: 50,
-                  nullArtworkWidget: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      image: const DecorationImage(
-                          image: AssetImage(
-                            "assets/images/cover.jpg",
+      return ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+        child: CustomScrollView(
+          shrinkWrap: true,
+          slivers: [
+            SliverAppBar(
+              elevation: 0,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              automaticallyImplyLeading: false,
+              pinned: true,
+              centerTitle: true,
+              toolbarHeight: 80,
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ListTile(
+                    shape: Theme.of(context).listTileTheme.shape,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 7),
+                    title: Text(song.title),
+                    titleTextStyle:
+                        Theme.of(context).listTileTheme.titleTextStyle,
+                    subtitle: Text(song.artist ?? "<unkown>"),
+                    subtitleTextStyle:
+                        Theme.of(context).listTileTheme.subtitleTextStyle,
+                    trailing: FavoritButton(
+                      song: song,
+                      color: Theme.of(context).iconTheme.color ?? Colors.grey,
+                    ),
+                    leading: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          image: const DecorationImage(
+                              image: AssetImage("assets/images/cover.jpg"))),
+                      child: QueryArtworkWidget(
+                        id: song.id,
+                        quality: 50,
+                        size: 200,
+                        controller: onAudioQuery,
+                        format: ArtworkFormat.JPEG,
+                        type: ArtworkType.AUDIO,
+                        keepOldArtwork: false,
+                        artworkBorder: BorderRadius.circular(6),
+                        artworkQuality: FilterQuality.low,
+                        artworkFit: BoxFit.fill,
+                        artworkHeight: 50,
+                        artworkWidth: 50,
+                        nullArtworkWidget: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            image: const DecorationImage(
+                                image: AssetImage(
+                                  "assets/images/cover.jpg",
+                                ),
+                                filterQuality: FilterQuality.low,
+                                fit: BoxFit.cover),
+                            color: const Color.fromARGB(255, 61, 60, 60),
                           ),
-                          filterQuality: FilterQuality.low,
-                          fit: BoxFit.cover),
-                      color: const Color.fromARGB(255, 61, 60, 60),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const Divider(
+                    thickness: 1,
+                    height: 3,
+                  ),
+                ],
               ),
+              scrolledUnderElevation: 0,
             ),
-          ),
-          const Divider(
-            indent: 16,
-            endIndent: 16,
-            thickness: 1,
-            height: 3,
-          ),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
+            SliverList.builder(
               itemCount: items.length,
               itemBuilder: (context, index) => items[index],
             ),
-          ),
-        ],
+          ],
+        ),
       );
     },
   );
@@ -240,85 +253,98 @@ Future<Widget?> morePlaylistBottomSheet(
     ),
   ];
   return showModalBottomSheet(
+    elevation: 0,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(25),
         topRight: Radius.circular(25),
       ),
     ),
-    constraints:
-        BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
     context: context,
     builder: (context) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-            child: ListTile(
-              shape: Theme.of(context).listTileTheme.shape,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 7),
-              title: Text(song.title),
-              titleTextStyle: Theme.of(context).listTileTheme.titleTextStyle,
-              subtitle: Text(song.artist ?? "<unkown>"),
-              subtitleTextStyle:
-                  Theme.of(context).listTileTheme.subtitleTextStyle,
-              trailing: FavoritButton(
-                song: song,
-                color: Theme.of(context).iconTheme.color ?? Colors.grey,
-              ),
-              leading: Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    image: const DecorationImage(
-                        image: AssetImage("assets/images/cover.jpg"))),
-                child: QueryArtworkWidget(
-                  id: song.id,
-                  quality: 50,
-                  size: 200,
-                  controller: onAudioQuery,
-                  format: ArtworkFormat.JPEG,
-                  type: ArtworkType.AUDIO,
-                  keepOldArtwork: false,
-                  artworkBorder: BorderRadius.circular(6),
-                  artworkQuality: FilterQuality.low,
-                  artworkFit: BoxFit.fill,
-                  artworkHeight: 50,
-                  artworkWidth: 50,
-                  nullArtworkWidget: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      image: const DecorationImage(
-                          image: AssetImage(
-                            "assets/images/cover.jpg",
+      return ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+        child: CustomScrollView(
+          shrinkWrap: true,
+          slivers: [
+            SliverAppBar(
+              elevation: 0,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              automaticallyImplyLeading: false,
+              pinned: true,
+              centerTitle: true,
+              toolbarHeight: 80,
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ListTile(
+                    shape: Theme.of(context).listTileTheme.shape,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 7),
+                    title: Text(song.title),
+                    titleTextStyle:
+                        Theme.of(context).listTileTheme.titleTextStyle,
+                    subtitle: Text(song.artist ?? "<unkown>"),
+                    subtitleTextStyle:
+                        Theme.of(context).listTileTheme.subtitleTextStyle,
+                    trailing: FavoritButton(
+                      song: song,
+                      color: Theme.of(context).iconTheme.color ?? Colors.grey,
+                    ),
+                    leading: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          image: const DecorationImage(
+                              image: AssetImage("assets/images/cover.jpg"))),
+                      child: QueryArtworkWidget(
+                        id: song.id,
+                        quality: 50,
+                        size: 200,
+                        controller: onAudioQuery,
+                        format: ArtworkFormat.JPEG,
+                        type: ArtworkType.AUDIO,
+                        keepOldArtwork: false,
+                        artworkBorder: BorderRadius.circular(6),
+                        artworkQuality: FilterQuality.low,
+                        artworkFit: BoxFit.fill,
+                        artworkHeight: 50,
+                        artworkWidth: 50,
+                        nullArtworkWidget: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            image: const DecorationImage(
+                                image: AssetImage(
+                                  "assets/images/cover.jpg",
+                                ),
+                                filterQuality: FilterQuality.low,
+                                fit: BoxFit.cover),
+                            color: const Color.fromARGB(255, 61, 60, 60),
                           ),
-                          filterQuality: FilterQuality.low,
-                          fit: BoxFit.cover),
-                      color: const Color.fromARGB(255, 61, 60, 60),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const Divider(
+                    thickness: 1,
+                    height: 3,
+                  ),
+                ],
               ),
+              scrolledUnderElevation: 0,
             ),
-          ),
-          const Divider(
-            indent: 16,
-            endIndent: 16,
-            thickness: 1,
-            height: 3,
-          ),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
+            SliverList.builder(
               itemCount: items.length,
               itemBuilder: (context, index) => items[index],
             ),
-          ),
-        ],
+          ],
+        ),
       );
     },
   );

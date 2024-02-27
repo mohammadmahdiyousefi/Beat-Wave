@@ -28,14 +28,14 @@ Future<Widget?> songInfoBottomSheet(
   };
 
   return showModalBottomSheet(
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    elevation: 0,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(25),
         topRight: Radius.circular(25),
       ),
     ),
-    constraints:
-        BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
     context: context,
     builder: (context) {
       return ClipRRect(
@@ -43,23 +43,36 @@ Future<Widget?> songInfoBottomSheet(
           topLeft: Radius.circular(25),
           topRight: Radius.circular(25),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-              child: Text(
-                song.title,
-                style: Theme.of(context).listTileTheme.titleTextStyle,
-                overflow: TextOverflow.ellipsis,
+        child: CustomScrollView(
+          shrinkWrap: true,
+          slivers: [
+            SliverAppBar(
+              elevation: 0,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              automaticallyImplyLeading: false,
+              pinned: true,
+              centerTitle: true,
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                    child: Text(
+                      song.title,
+                      style: Theme.of(context).listTileTheme.titleTextStyle,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const Divider(
+                      // indent: 16,
+                      //  endIndent: 16,
+                      ),
+                ],
               ),
+              scrolledUnderElevation: 0,
             ),
-            const Divider(
-              indent: 16,
-              endIndent: 16,
-            ),
-            Expanded(
-                child: ListView.builder(
+            SliverList.builder(
               itemCount: items.length,
               itemBuilder: (context, index) => Padding(
                 padding:
@@ -83,7 +96,7 @@ Future<Widget?> songInfoBottomSheet(
                   ],
                 ),
               ),
-            ))
+            ),
           ],
         ),
       );
