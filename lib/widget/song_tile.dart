@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:justaudioplayer/di/di.dart';
+import 'package:beat_wave/di/di.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class SongTile extends StatelessWidget {

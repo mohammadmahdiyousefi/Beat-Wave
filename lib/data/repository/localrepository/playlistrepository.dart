@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:justaudioplayer/data/datasourc/localdatasourc/playlistdatasourc.dart';
-import 'package:justaudioplayer/di/di.dart';
+import 'package:beat_wave/data/datasourc/localdatasourc/playlistdatasourc.dart';
+import 'package:beat_wave/di/di.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 abstract class IPlaylistRepository {

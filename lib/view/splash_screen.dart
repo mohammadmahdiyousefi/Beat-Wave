@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:justaudioplayer/permission/premission.dart';
-import 'package:justaudioplayer/view/home_screens.dart';
+import 'package:beat_wave/permission/premission.dart';
+import 'package:beat_wave/view/home_screens.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SplashScreen extends StatefulWidget {

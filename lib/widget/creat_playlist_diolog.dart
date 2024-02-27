@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:justaudioplayer/bloc/playlist/playlist_bloc.dart';
-import 'package:justaudioplayer/bloc/playlist/playlist_event.dart';
-import 'package:justaudioplayer/data/model/playlist.dart';
+import 'package:beat_wave/bloc/playlist/playlist_bloc.dart';
+import 'package:beat_wave/bloc/playlist/playlist_event.dart';
+import 'package:beat_wave/data/model/playlist.dart';
 
 Future craetePlaylist(
   BuildContext cxt,

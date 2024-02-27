@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:justaudioplayer/bloc/album/album_event.dart';
-import 'package:justaudioplayer/bloc/album/album_state.dart';
-import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/data/repository/localrepository/albumrepository.dart';
+import 'package:beat_wave/bloc/album/album_event.dart';
+import 'package:beat_wave/bloc/album/album_state.dart';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/data/repository/localrepository/albumrepository.dart';
 
 class AlbumBloc extends Bloc<AlbumEvent, AlbumState> {
   final IAlbumRepository _repository = locator.get();

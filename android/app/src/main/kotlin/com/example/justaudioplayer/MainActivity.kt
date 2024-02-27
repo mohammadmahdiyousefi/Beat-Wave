@@ -1,4 +1,4 @@
-package com.example.justaudioplayer
+package com.example.beat_wave
 
 import io.flutter.embedding.android.FlutterActivity
 

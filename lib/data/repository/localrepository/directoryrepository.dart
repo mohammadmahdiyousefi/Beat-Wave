@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:justaudioplayer/data/datasourc/localdatasourc/directorydatasourc.dart';
-import 'package:justaudioplayer/di/di.dart';
+import 'package:beat_wave/data/datasourc/localdatasourc/directorydatasourc.dart';
+import 'package:beat_wave/di/di.dart';
 
 abstract class IDirectoryRepository {
   Future<Either<String, List<String>>> getdirectoryrepository();

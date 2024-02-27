@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:justaudioplayer/bloc/all_song/all_song_event.dart';
-import 'package:justaudioplayer/bloc/all_song/all_song_state.dart';
-import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/data/repository/localrepository/songrepository.dart';
+import 'package:beat_wave/bloc/all_song/all_song_event.dart';
+import 'package:beat_wave/bloc/all_song/all_song_state.dart';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/data/repository/localrepository/songrepository.dart';
 
 class AllSongBloc extends Bloc<AllSongEvent, AllSongState> {
   final ISongRepository _repository = locator.get();

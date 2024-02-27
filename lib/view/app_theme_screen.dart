@@ -2,9 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:justaudioplayer/bloc/theme/theme_bloc.dart';
-import 'package:justaudioplayer/bloc/theme/theme_event.dart';
-import 'package:justaudioplayer/bloc/theme/theme_state.dart';
+import 'package:beat_wave/bloc/theme/theme_bloc.dart';
+import 'package:beat_wave/bloc/theme/theme_event.dart';
+import 'package:beat_wave/bloc/theme/theme_state.dart';
 
 class AppThemeScreen extends StatelessWidget {
   AppThemeScreen({super.key});

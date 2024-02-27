@@ -3,9 +3,9 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:justaudioplayer/data/model/positiondata.dart';
-import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/view/play_music_screen.dart';
+import 'package:beat_wave/data/model/positiondata.dart';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/view/play_music_screen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 

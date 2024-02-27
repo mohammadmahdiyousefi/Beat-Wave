@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:justaudioplayer/bloc/songlist/song_list_bloc.dart';
-import 'package:justaudioplayer/bloc/songlist/song_list_event.dart';
-import 'package:justaudioplayer/data/model/playlist.dart';
-import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/widget/add_to_playlist.dart';
-import 'package:justaudioplayer/widget/favorit_button.dart';
-import 'package:justaudioplayer/widget/song_info_widget.dart';
+import 'package:beat_wave/bloc/songlist/song_list_bloc.dart';
+import 'package:beat_wave/bloc/songlist/song_list_event.dart';
+import 'package:beat_wave/data/model/playlist.dart';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/widget/add_to_playlist.dart';
+import 'package:beat_wave/widget/favorit_button.dart';
+import 'package:beat_wave/widget/song_info_widget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:share_plus/share_plus.dart';
 

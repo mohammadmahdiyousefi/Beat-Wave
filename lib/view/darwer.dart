@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:justaudioplayer/view/app_theme_screen.dart';
-import 'package:justaudioplayer/view/support_screen.dart';
+import 'package:beat_wave/view/app_theme_screen.dart';
+import 'package:beat_wave/view/support_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'aboutscreen.dart';

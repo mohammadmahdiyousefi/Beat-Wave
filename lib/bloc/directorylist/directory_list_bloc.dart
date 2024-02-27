@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:justaudioplayer/bloc/directorylist/directory_list_event.dart';
-import 'package:justaudioplayer/bloc/directorylist/directory_list_state.dart';
-import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/data/repository/localrepository/directoryrepository.dart';
+import 'package:beat_wave/bloc/directorylist/directory_list_event.dart';
+import 'package:beat_wave/bloc/directorylist/directory_list_state.dart';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/data/repository/localrepository/directoryrepository.dart';
 
 class DirectoryListBloc extends Bloc<DirectoryListEvent, DirectoryListState> {
   final IDirectoryRepository _repository = locator.get();

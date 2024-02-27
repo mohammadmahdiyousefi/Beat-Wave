@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:justaudioplayer/bloc/search/search_song_event.dart';
-import 'package:justaudioplayer/bloc/search/search_song_state.dart';
-import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/data/repository/localrepository/searchsongrepository.dart';
+import 'package:beat_wave/bloc/search/search_song_event.dart';
+import 'package:beat_wave/bloc/search/search_song_state.dart';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/data/repository/localrepository/searchsongrepository.dart';
 
 class Searchbloc extends Bloc<SearchSongEvent, SearchSongState> {
   final ISearchsongRepository _repository = locator.get();

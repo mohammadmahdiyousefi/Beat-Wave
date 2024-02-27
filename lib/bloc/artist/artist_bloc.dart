@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/data/repository/localrepository/artistrepository.dart';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/data/repository/localrepository/artistrepository.dart';
 import 'artist_event.dart';
 import 'artist_state.dart';
 

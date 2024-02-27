@@ -1,6 +1,6 @@
 {
-    "name": "justaudioplayer",
-    "short_name": "justaudioplayer",
+    "name": "beat_wave",
+    "short_name": "beat_wave",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

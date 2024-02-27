@@ -1,6 +1,6 @@
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:justaudioplayer/di/di.dart';
+import 'package:beat_wave/di/di.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class PlayerAudio {

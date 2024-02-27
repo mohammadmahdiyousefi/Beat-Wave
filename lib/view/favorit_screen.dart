@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:justaudioplayer/data/model/player.dart';
-import 'package:justaudioplayer/view/miniplayer.dart';
-import 'package:justaudioplayer/widget/song_more.dart';
+import 'package:beat_wave/data/model/player.dart';
+import 'package:beat_wave/view/miniplayer.dart';
+import 'package:beat_wave/widget/song_more.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '../widget/song_tile.dart';
 

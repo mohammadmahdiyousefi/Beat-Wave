@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:justaudioplayer/bloc/songlist/song_list_event.dart';
-import 'package:justaudioplayer/bloc/songlist/song_list_state.dart';
-import 'package:justaudioplayer/di/di.dart';
-import 'package:justaudioplayer/data/repository/localrepository/songrepository.dart';
+import 'package:beat_wave/bloc/songlist/song_list_event.dart';
+import 'package:beat_wave/bloc/songlist/song_list_state.dart';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/data/repository/localrepository/songrepository.dart';
 
 class SongBloc extends Bloc<SongListEvent, SongListState> {
   final ISongRepository _repository = locator.get();

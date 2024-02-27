@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:justaudioplayer/bloc/playlist/playlist_bloc.dart';
-import 'package:justaudioplayer/bloc/playlist/playlist_event.dart';
-import 'package:justaudioplayer/bloc/playlist/playlist_state.dart';
-import 'package:justaudioplayer/data/model/playlist.dart';
-import 'package:justaudioplayer/widget/creat_playlist_diolog.dart';
-import 'package:justaudioplayer/widget/lodingwidget.dart';
+import 'package:beat_wave/bloc/playlist/playlist_bloc.dart';
+import 'package:beat_wave/bloc/playlist/playlist_event.dart';
+import 'package:beat_wave/bloc/playlist/playlist_state.dart';
+import 'package:beat_wave/data/model/playlist.dart';
+import 'package:beat_wave/widget/creat_playlist_diolog.dart';
+import 'package:beat_wave/widget/lodingwidget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 Future<Widget?> addtoplaylistbottomshet(
