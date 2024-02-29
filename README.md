@@ -1,4 +1,4 @@
-# beat_wave
+# Beat Wave
 
 <img src="https://github.com/mohammadmahdiyousefi/Beat-Wave/assets/103829998/24f19d95-2902-4014-8f92-cee75797d839" > 
 <img src="https://github.com/mohammadmahdiyousefi/Beat-Wave/assets/103829998/e97a5643-cf72-4c90-a486-0400c1535966" > 
