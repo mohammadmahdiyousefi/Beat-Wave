@@ -1,11 +1,8 @@
 # beat_wave
 
-<img src="https://github.com/mohammadmahdiyousefi/beat_wave/assets/103829998/310db818-d493-4288-8601-5730535f06df" width="250"> 
-<img src="https://github.com/mohammadmahdiyousefi/beat_wave/assets/103829998/279e8703-de18-415c-b39d-3af66a0e659c" width="250"> 
-<img src="https://github.com/mohammadmahdiyousefi/beat_wave/assets/103829998/c1761c8a-de14-4e81-9dcd-9c73d449c40e" width="250"> 
-<img src="https://github.com/mohammadmahdiyousefi/beat_wave/assets/103829998/fbf7c2bc-68cb-4b42-b23b-e148b26b15b7" width="250"> 
-<img src="https://github.com/mohammadmahdiyousefi/beat_wave/assets/103829998/df2eb2ea-d567-4189-8ee3-9de18164f1ec" width="250"> 
-<img src="https://github.com/mohammadmahdiyousefi/beat_wave/assets/103829998/d525534e-e075-40aa-a00a-fd98845afb36" width="250"> 
+<img src="https://github.com/mohammadmahdiyousefi/Beat-Wave/assets/103829998/24f19d95-2902-4014-8f92-cee75797d839" > 
+<img src="https://github.com/mohammadmahdiyousefi/Beat-Wave/assets/103829998/e97a5643-cf72-4c90-a486-0400c1535966" > 
+<img src="https://github.com/mohammadmahdiyousefi/Beat-Wave/assets/103829998/9520c9c4-5f39-48ec-a58e-3c4ab380f028" > 
 
 
 
