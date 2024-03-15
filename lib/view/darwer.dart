@@ -15,28 +15,13 @@ class Drawerscreen extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 220,
+            height: 120,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             width: double.infinity,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                  // Color.fromARGB(6, 161, 127, 224),
-                  // Color.fromARGB(140, 92, 38, 193),
-                  // Color.fromARGB(255, 63, 43, 150),
-                  Theme.of(context).colorScheme.background.withOpacity(0.2),
-                  // Color.fromARGB(5, 27, 15, 255),
-                  Theme.of(context).colorScheme.primary,
-                ])),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Image.asset(
-                  "assets/images/app_icon/logo.png",
-                  height: 150,
-                  width: 150,
-                ),
                 FutureBuilder<PackageInfo>(
                   future: PackageInfo.fromPlatform(),
                   builder: (context, snapshot) {
@@ -47,13 +32,13 @@ class Drawerscreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              snapshot.data?.appName ?? "",
-                              style: const TextStyle(
-                                  fontFamily: "ISW",
-                                  fontSize: 27,
-                                  fontWeight: FontWeight.w700),
-                            ),
+                            Text(snapshot.data?.appName ?? "",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall!
+                                    .copyWith(
+                                        fontSize: 33,
+                                        fontWeight: FontWeight.w700)),
                             Text(
                               'v${snapshot.data?.version ?? 0}',
                               style: Theme.of(context).textTheme.bodySmall,
@@ -82,8 +67,9 @@ class Drawerscreen extends StatelessWidget {
             leading: const Icon(
               Icons.palette_outlined,
             ),
-            title: const Text(
+            title: Text(
               "App Theme",
+              style: Theme.of(context).listTileTheme.titleTextStyle,
             ),
             titleTextStyle: Theme.of(context).listTileTheme.titleTextStyle,
           ),
@@ -98,8 +84,9 @@ class Drawerscreen extends StatelessWidget {
             leading: const Icon(
               Icons.info_outline,
             ),
-            title: const Text(
+            title: Text(
               "About",
+              style: Theme.of(context).listTileTheme.titleTextStyle,
             ),
             titleTextStyle: Theme.of(context).listTileTheme.titleTextStyle,
           ),
@@ -114,8 +101,9 @@ class Drawerscreen extends StatelessWidget {
             leading: const Icon(
               Icons.support_outlined,
             ),
-            title: const Text(
+            title: Text(
               "Support",
+              style: Theme.of(context).listTileTheme.titleTextStyle,
             ),
             titleTextStyle: Theme.of(context).listTileTheme.titleTextStyle,
           ),

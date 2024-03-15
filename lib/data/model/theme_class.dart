@@ -50,33 +50,30 @@ class CustomTheme {
             fontWeight: FontWeight.w300,
             color: Color(0xffF4F4F4)),
       ),
-      popupMenuTheme: const PopupMenuThemeData(
-        textStyle: TextStyle(
-          fontFamily: "ROBR",
-          fontSize: 11,
-          fontWeight: FontWeight.w300,
-          color: Colors.white,
-        ),
-      ),
       sliderTheme: const SliderThemeData(
         thumbColor: Color(0xFF4758AC),
         activeTrackColor: Color(0xFF2748EE),
-        secondaryActiveTrackColor: Color.fromARGB(255, 142, 142, 142),
+        inactiveTrackColor: Color(0xFF8E8E8E),
+        secondaryActiveTrackColor: Color(0x4B2748EE),
         valueIndicatorTextStyle: TextStyle(
           fontFamily: "ROBR",
           fontSize: 13,
           fontWeight: FontWeight.w300,
-          color: Color.fromARGB(
-            255,
-            244,
-            244,
-            244,
+          color: Color(0xFFF4F4F4),
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Color(0xff121212),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(18),
+            topRight: Radius.circular(18),
           ),
         ),
       ),
       scaffoldBackgroundColor: const Color(0xff121212),
-      focusColor: Color(int.parse("ffAA00FF", radix: 16)).withOpacity(0.15),
-      cardColor: const Color.fromARGB(39, 244, 244, 244),
+      cardColor: const Color(0x25F4F4F4),
       primaryColor: const Color(0xFF2748EE),
       colorScheme: darkColorScheme);
 
@@ -87,22 +84,22 @@ class CustomTheme {
             fontFamily: "ROBM",
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.black),
+            color: Color(0xFF000000)),
         headlineMedium: TextStyle(
             fontFamily: "ROBM",
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: Colors.white),
+            color: Color(0xFFFFFFFF)),
         bodySmall: TextStyle(
             fontFamily: "ROBM",
             fontSize: 11,
             fontWeight: FontWeight.w300,
-            color: Color(0xff8E8E8E)),
+            color: Color(0xFF8E8E8E)),
         labelSmall: TextStyle(
           fontFamily: "ROBR",
           fontSize: 11,
           fontWeight: FontWeight.w300,
-          color: Colors.black,
+          color: Color(0xFF000000),
         ),
       ),
       listTileTheme: ListTileThemeData(
@@ -128,33 +125,30 @@ class CustomTheme {
             fontWeight: FontWeight.w300,
             color: Color(0xff000000)),
       ),
-      popupMenuTheme: const PopupMenuThemeData(
-        textStyle: TextStyle(
-          fontFamily: "ROBR",
-          fontSize: 11,
-          fontWeight: FontWeight.w300,
-          color: Colors.black,
-        ),
-      ),
       sliderTheme: const SliderThemeData(
         thumbColor: Color(0xFF4758AC),
         activeTrackColor: Color(0xFF2748EE),
-        secondaryActiveTrackColor: Color.fromARGB(255, 142, 142, 142),
+        inactiveTrackColor: Color(0xFF8E8E8E),
+        secondaryActiveTrackColor: Color(0x4B2748EE),
         valueIndicatorTextStyle: TextStyle(
           fontFamily: "ROBR",
           fontSize: 13,
           fontWeight: FontWeight.w300,
-          color: Color.fromARGB(
-            255,
-            244,
-            244,
-            244,
+          color: Color(0xFFF4F4F4),
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Color(0xffF4F4F4),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(18),
+            topRight: Radius.circular(18),
           ),
         ),
       ),
       scaffoldBackgroundColor: const Color(0xffF4F4F4),
-      focusColor: Color(int.parse("ffAA00FF", radix: 16)).withOpacity(0.2),
-      cardColor: const Color.fromARGB(128, 0, 0, 0),
+      cardColor: const Color(0x80000000),
       primaryColor: const Color(0xFF2748EE),
       colorScheme: lightColorScheme);
 }

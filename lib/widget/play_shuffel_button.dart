@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:beat_wave/data/model/player.dart';
+import 'package:beat_wave/service/player_service/player.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 // ignore: must_be_immutable

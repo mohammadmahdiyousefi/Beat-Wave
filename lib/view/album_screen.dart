@@ -40,155 +40,153 @@ class AlbumScreen extends StatelessWidget {
         centerTitle: true,
         //  bottom: customtabbar(),
       ),
-      body: BlocBuilder<AlbumBloc, AlbumState>(builder: (context, state) {
-        //----------------------  state album true state -------------------------------
-        if (state is AlbumList) {
-          return RefreshIndicator(
-            onRefresh: () async {
-              BlocProvider.of<AlbumBloc>(context).add(GetAlbumEvent());
-            },
-            child: CustomScrollView(
-              slivers: [
-                const SliverToBoxAdapter(child: SizedBox(height: 6)),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
+      body: BlocBuilder<AlbumBloc, AlbumState>(
+        builder: (context, state) {
+//----------------------  state album true state -------------------------------
+          if (state is AlbumList) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                BlocProvider.of<AlbumBloc>(context).add(GetAlbumEvent());
+              },
+              child: CustomScrollView(
+                slivers: [
+                  const SliverToBoxAdapter(child: SizedBox(height: 6)),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    sliver: SliverGrid.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisExtent: 250,
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16),
+                      itemCount: state.albums.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                            onTap: () async {
+                              customNavigator(
+                                context: context,
+                                page: SongListScreen(
+                                    id: state.albums[index].id,
+                                    nullArtwork: "assets/images/album.png",
+                                    title: state.albums[index].album,
+                                    appbarTitle: "Album",
+                                    type: ArtworkType.ALBUM,
+                                    audiosFromType: AudiosFromType.ALBUM_ID),
+                              );
+                            },
+                            child: GrideViewWidget(
+                              id: state.albums[index].id,
+                              name: state.albums[index].album,
+                              numberofsong: state.albums[index].numOfSongs,
+                              nullartwork: "assets/images/album.png",
+                            ));
+                      },
+                    ),
                   ),
-                  sliver: SliverGrid.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisExtent: 250,
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 16,
-                            crossAxisSpacing: 16),
-                    itemCount: state.albums.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                          onTap: () async {
-                            customNavigator(
-                              context: context,
-                              page: SongListScreen(
-                                  id: state.albums[index].id,
-                                  nullArtwork: "assets/images/album.png",
-                                  title: state.albums[index].album,
-                                  appbarTitle: "Album",
-                                  type: ArtworkType.ALBUM,
-                                  audiosFromType: AudiosFromType.ALBUM_ID),
-                            );
-                          },
-                          child: GrideViewWidget(
-                            id: state.albums[index].id,
-                            name: state.albums[index].album,
-                            numberofsong: state.albums[index].numOfSongs,
-                            nullartwork: "assets/images/album.png",
-                          ));
-                    },
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 80),
+                  )
+                ],
+              ),
+            );
+          }
+          //------------------------------------------------------------------------------
+          //----------------- loding mode state -----------------------------------------
+          else if (state is AlbumLoading) {
+            return const Loading();
+          }
+          //------------------------------------------------------------------------------
+          //---------------- empty mode state -------------------------------------------
+          else if (state is AlbumEmpty) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/error-icon.svg",
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).iconTheme.color,
                   ),
-                ),
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 80),
-                )
-              ],
-            ),
-          );
-        }
-        //------------------------------------------------------------------------------
-        //----------------- loding mode state -----------------------------------------
-        else if (state is AlbumLoading) {
-          return const Loading();
-        }
-        //------------------------------------------------------------------------------
-        //---------------- empty mode state -------------------------------------------
-        else if (state is AlbumEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  "assets/svg/error-icon.svg",
-                  // ignore: deprecated_member_use
-                  color: Theme.of(context).iconTheme.color,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  state.empty,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
-          );
-        }
-        //------------------------------------------------------------------------------
-        //----------------- error mode state -------------------------------------------
-        else if (state is AlbumError) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  "assets/svg/error-icon.svg",
-                  // ignore: deprecated_member_use
-                  color: Theme.of(context).iconTheme.color,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  state.error,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextButton(
-                    onPressed: () {
-                      BlocProvider.of<AlbumBloc>(context).add(GetAlbumEvent());
-                    },
-                    child: const Text(
-                      "Try again",
-                    )),
-              ],
-            ),
-          );
-        }
-        //------------------------------------------------------------------------------
-        //---------------- other mode --------------------------------------------------
-        else {
-          return Center(
-            child: Column(
-              children: [
-                SvgPicture.asset(
-                  "assets/svg/error-icon.svg",
-                  // ignore: deprecated_member_use
-                  color: Theme.of(context).iconTheme.color,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "An unknown error occurred while loading albums",
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextButton(
-                    onPressed: () {
-                      BlocProvider.of<AlbumBloc>(context).add(GetAlbumEvent());
-                    },
-                    child: const Text(
-                      "Try again",
-                    )),
-              ],
-            ),
-          );
-        }
-        //------------------------------------------------------------------------------
-      }),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    state.empty,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            );
+          }
+//------------------------------------------------------------------------------
+//----------------- error mode state -------------------------------------------
+          else if (state is AlbumError) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/error-icon.svg",
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    state.error,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        BlocProvider.of<AlbumBloc>(context)
+                            .add(GetAlbumEvent());
+                      },
+                      child: const Text(
+                        "Try again",
+                      )),
+                ],
+              ),
+            );
+          }
+//------------------------------------------------------------------------------
+//---------------- other mode --------------------------------------------------
+          else {
+            return Center(
+              child: Column(
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/error-icon.svg",
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "An unknown error occurred while loading albums",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        BlocProvider.of<AlbumBloc>(context)
+                            .add(GetAlbumEvent());
+                      },
+                      child: const Text(
+                        "Try again",
+                      )),
+                ],
+              ),
+            );
+          }
+          //------------------------------------------------------------------------------
+        },
+      ),
     );
   }
 }

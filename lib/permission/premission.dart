@@ -7,7 +7,9 @@ class AppPremission {
     var status = await permission.permissionsStatus();
     if (status == false) {
       status = await permission.permissionsRequest();
+      return status;
+    } else {
+      return status;
     }
-    return status;
   }
 }

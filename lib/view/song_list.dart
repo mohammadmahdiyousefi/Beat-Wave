@@ -1,14 +1,16 @@
 import 'dart:math';
+import 'package:beat_wave/widget/bottomsheet/bottom_sheet_item.dart';
+import 'package:beat_wave/widget/favorit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:beat_wave/bloc/songlist/song_list_bloc.dart';
 import 'package:beat_wave/bloc/songlist/song_list_event.dart';
 import 'package:beat_wave/bloc/songlist/song_list_state.dart';
-import 'package:beat_wave/data/model/player.dart';
+import 'package:beat_wave/service/player_service/player.dart';
 import 'package:beat_wave/di/di.dart';
 import 'package:beat_wave/widget/lodingwidget.dart';
-import 'package:beat_wave/widget/song_more.dart';
+import 'package:beat_wave/widget/bottomsheet/song_more.dart';
 import 'package:beat_wave/widget/song_tile.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'miniplayer.dart';
@@ -160,17 +162,79 @@ class SongListScreen extends StatelessWidget {
                           );
                         },
                         moreOnTap: () async {
-                          if (audiosFromType == AudiosFromType.PLAYLIST) {
-                            await morePlaylistBottomSheet(context,
-                                state.songs[index], id, audiosFromType, path);
-                          } else {
-                            await moreBottomSheet(context, state.songs[index]);
-                          }
+                          await moreBottomSheet(
+                              context,
+                              ListTile(
+                                shape: Theme.of(context).listTileTheme.shape,
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 7),
+                                title: Text(state.songs[index].title),
+                                titleTextStyle: Theme.of(context)
+                                    .listTileTheme
+                                    .titleTextStyle,
+                                subtitle: Text(
+                                    state.songs[index].artist ?? "<unkown>"),
+                                subtitleTextStyle: Theme.of(context)
+                                    .listTileTheme
+                                    .subtitleTextStyle,
+                                trailing: FavoritButton(
+                                  song: state.songs[index],
+                                  color: Theme.of(context).iconTheme.color ??
+                                      Colors.grey,
+                                ),
+                                leading: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      image: const DecorationImage(
+                                          image: AssetImage(
+                                              "assets/images/cover.jpg"))),
+                                  child: QueryArtworkWidget(
+                                    id: state.songs[index].id,
+                                    quality: 50,
+                                    size: 200,
+                                    controller: onAudioQuery,
+                                    format: ArtworkFormat.JPEG,
+                                    type: ArtworkType.AUDIO,
+                                    keepOldArtwork: false,
+                                    artworkBorder: BorderRadius.circular(6),
+                                    artworkQuality: FilterQuality.low,
+                                    artworkFit: BoxFit.fill,
+                                    artworkHeight: 50,
+                                    artworkWidth: 50,
+                                    nullArtworkWidget: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        image: const DecorationImage(
+                                            image: AssetImage(
+                                              "assets/images/cover.jpg",
+                                            ),
+                                            filterQuality: FilterQuality.low,
+                                            fit: BoxFit.cover),
+                                        color: const Color.fromARGB(
+                                            255, 61, 60, 60),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              audiosFromType == AudiosFromType.PLAYLIST
+                                  ? songItemsPlaylist(
+                                      context,
+                                      state.songs[index],
+                                      id,
+                                      path,
+                                      audiosFromType)
+                                  : songItems(context, state.songs[index]));
                         },
                       ),
                     )
                   } else if (state is SongListEmpty) ...{
                     SliverFillRemaining(
+                      hasScrollBody: false,
                       child: Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
@@ -212,9 +276,6 @@ class SongListScreen extends StatelessWidget {
                               state.error,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
                             TextButton(
                                 onPressed: () {
                                   BlocProvider.of<SongBloc>(context).add(
@@ -250,9 +311,6 @@ class SongListScreen extends StatelessWidget {
                             Text(
                               "An unknown error occurred",
                               style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            const SizedBox(
-                              height: 10,
                             ),
                             TextButton(
                                 onPressed: () {

@@ -1,17 +1,20 @@
 import 'dart:convert';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/service/player_service/player.dart';
+import 'package:beat_wave/widget/bottomsheet/bottom_sheet_item.dart';
+import 'package:beat_wave/widget/favorit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:beat_wave/data/model/player.dart';
 import 'package:beat_wave/view/miniplayer.dart';
-import 'package:beat_wave/widget/song_more.dart';
+import 'package:beat_wave/widget/bottomsheet/song_more.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import '../widget/song_tile.dart';
 
 class FavoritScreen extends StatelessWidget {
   FavoritScreen({super.key});
-
   final Box<String> favoritebox = Hive.box<String>('FavoriteSongs');
+  final OnAudioQuery onAudioQuery = locator.get<OnAudioQuery>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,13 +77,84 @@ class FavoritScreen extends StatelessWidget {
                           song: SongModel(jsonDecode(boxList[index])),
                           onTap: () async {
                             await PlayerAudio.setAudioSource(
-                              loadSongList(favorit),
+                              _loadSongList(favorit),
                               index,
                             );
                           },
                           moreOnTap: () async {
                             await moreBottomSheet(
-                                context, SongModel(jsonDecode(boxList[index])));
+                              context,
+                              ListTile(
+                                shape: Theme.of(context).listTileTheme.shape,
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 7),
+                                title: Text(
+                                    SongModel(jsonDecode(boxList[index]))
+                                        .title),
+                                titleTextStyle: Theme.of(context)
+                                    .listTileTheme
+                                    .titleTextStyle,
+                                subtitle: Text(
+                                    SongModel(jsonDecode(boxList[index]))
+                                            .artist ??
+                                        "<unkown>"),
+                                subtitleTextStyle: Theme.of(context)
+                                    .listTileTheme
+                                    .subtitleTextStyle,
+                                trailing: FavoritButton(
+                                  song: SongModel(jsonDecode(boxList[index])),
+                                  color: Theme.of(context).iconTheme.color ??
+                                      Colors.grey,
+                                ),
+                                leading: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      image: const DecorationImage(
+                                          image: AssetImage(
+                                              "assets/images/cover.jpg"))),
+                                  child: QueryArtworkWidget(
+                                    id: SongModel(jsonDecode(boxList[index]))
+                                        .id,
+                                    quality: 50,
+                                    size: 200,
+                                    controller: onAudioQuery,
+                                    format: ArtworkFormat.JPEG,
+                                    type: ArtworkType.AUDIO,
+                                    keepOldArtwork: false,
+                                    artworkBorder: BorderRadius.circular(6),
+                                    artworkQuality: FilterQuality.low,
+                                    artworkFit: BoxFit.fill,
+                                    artworkHeight: 50,
+                                    artworkWidth: 50,
+                                    nullArtworkWidget: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6),
+                                        image: const DecorationImage(
+                                            image: AssetImage(
+                                              "assets/images/cover.jpg",
+                                            ),
+                                            filterQuality: FilterQuality.low,
+                                            fit: BoxFit.cover),
+                                        color: const Color.fromARGB(
+                                            255, 61, 60, 60),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              songItems(
+                                context,
+                                SongModel(
+                                  jsonDecode(
+                                    boxList[index],
+                                  ),
+                                ),
+                              ),
+                            );
                           },
                         )),
                 const SliverToBoxAdapter(
@@ -94,7 +168,7 @@ class FavoritScreen extends StatelessWidget {
     );
   }
 
-  List<SongModel> loadSongList(Box box) {
+  List<SongModel> _loadSongList(Box box) {
     List<SongModel> favoritSongs = [];
     for (var song in box.values.toList()) {
       dynamic decodedJson = jsonDecode(song);

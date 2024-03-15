@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -41,171 +40,147 @@ class DirectoryListScreen extends StatelessWidget {
         //  bottom: customtabbar(),
       ),
       body: BlocBuilder<DirectoryListBloc, DirectoryListState>(
-          builder: (context, state) {
-        if (state is DirectoryList) {
-          return RefreshIndicator(
-            onRefresh: () async {
-              BlocProvider.of<DirectoryListBloc>(context)
-                  .add(GetDirectoryList());
-            },
-            child: CustomScrollView(
-              slivers: [
-                const SliverToBoxAdapter(child: SizedBox(height: 6)),
-                SliverGrid.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3, mainAxisExtent: 100),
-                  itemCount: state.directorylist.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                        onTap: () {
-                          customNavigator(
-                            context: context,
-                            page: SongListScreen(
-                              id: -1,
-                              nullArtwork: "assets/images/song.png",
-                              title: state.directorylist[index].split('/').last,
-                              appbarTitle: "Folder",
-                              type: ArtworkType.AUDIO,
-                              path: state.directorylist[index],
-                            ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            const Icon(
-                              Icons.folder,
-                              size: 60,
-                              color: Color.fromARGB(255, 128, 128, 128),
-                            ),
-                            SizedBox(
-                              width: 60,
-                              child: Text(
-                                  state.directorylist[index].split('/').last,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .listTileTheme
-                                      .titleTextStyle),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            // Text(
-                            //     "${loadSongs(state.directorylist[index])} ${loadSongs(state.directorylist[index]) <= 1 ? "song" : "songs"}",
-                            //     style: Theme.of(context)
-                            //         .listTileTheme
-                            //         .subtitleTextStyle),
-                          ],
-                        ));
-                  },
-                ),
-              ],
-            ),
-          );
-        } else if (state is DirectoryListLoading) {
-          return const Center(child: Loading());
-        } else if (state is DirectoryListEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  "assets/svg/error-icon.svg",
-                  // ignore: deprecated_member_use
-                  color: Theme.of(context).iconTheme.color,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  state.empty,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
-          );
-        } else if (state is DirectoryListError) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  "assets/svg/error-icon.svg",
-                  // ignore: deprecated_member_use
-                  color: Theme.of(context).iconTheme.color,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  state.error,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextButton(
-                    onPressed: () {
-                      BlocProvider.of<DirectoryListBloc>(context)
-                          .add(GetDirectoryList());
+        builder: (context, state) {
+          if (state is DirectoryList) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                BlocProvider.of<DirectoryListBloc>(context)
+                    .add(GetDirectoryList());
+              },
+              child: CustomScrollView(
+                slivers: [
+                  const SliverToBoxAdapter(child: SizedBox(height: 6)),
+                  SliverList.builder(
+                    itemCount: state.directorylist.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ListTile(
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 7),
+                          horizontalTitleGap: 7,
+                          onTap: () {
+                            customNavigator(
+                              context: context,
+                              page: SongListScreen(
+                                id: -1,
+                                nullArtwork: "assets/images/song.png",
+                                title:
+                                    state.directorylist[index].split('/').last,
+                                appbarTitle: "Folder",
+                                type: ArtworkType.AUDIO,
+                                path: state.directorylist[index],
+                              ),
+                            );
+                          },
+                          leading: const Icon(
+                            Icons.folder,
+                            size: 60,
+                            color: Color.fromARGB(255, 128, 128, 128),
+                          ),
+                          title: Text(
+                              state.directorylist[index].split('/').last,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .listTileTheme
+                                  .titleTextStyle),
+                          subtitle: Text(state.directorylist[index],
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .listTileTheme
+                                  .subtitleTextStyle),
+                        ),
+                      );
                     },
-                    child: const Text(
-                      "Try again",
-                    )),
-              ],
-            ),
-          );
-        } else {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  "assets/svg/error-icon.svg",
-                  // ignore: deprecated_member_use
-                  color: Theme.of(context).iconTheme.color,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "An unknown error occurred while loading folders",
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextButton(
-                    onPressed: () {
-                      BlocProvider.of<DirectoryListBloc>(context)
-                          .add(GetDirectoryList());
-                    },
-                    child: const Text(
-                      "Try again",
-                    )),
-              ],
-            ),
-          );
-        }
-      }),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 70)),
+                ],
+              ),
+            );
+          } else if (state is DirectoryListLoading) {
+            return const Center(child: Loading());
+          } else if (state is DirectoryListEmpty) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/error-icon.svg",
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    state.empty,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            );
+          } else if (state is DirectoryListError) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/error-icon.svg",
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    state.error,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        BlocProvider.of<DirectoryListBloc>(context)
+                            .add(GetDirectoryList());
+                      },
+                      child: const Text(
+                        "Try again",
+                      )),
+                ],
+              ),
+            );
+          } else {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/error-icon.svg",
+                    // ignore: deprecated_member_use
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "An unknown error occurred while loading folders",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        BlocProvider.of<DirectoryListBloc>(context)
+                            .add(GetDirectoryList());
+                      },
+                      child: const Text(
+                        "Try again",
+                      )),
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
-}
-
-int loadSongs(String location) {
-  Directory directory = Directory(location);
-  return directory
-      .listSync()
-      .where((file) =>
-          file.path.endsWith('.mp3') ||
-          file.path.endsWith('.m4a') ||
-          file.path.endsWith('.aac') ||
-          file.path.endsWith('.ogg') ||
-          file.path.endsWith('.wav'))
-      .map((file) => File(file.path))
-      .toList()
-      .length;
 }

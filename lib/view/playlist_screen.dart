@@ -1,10 +1,11 @@
+import 'package:beat_wave/widget/bottomsheet/bottom_sheet_item.dart';
+import 'package:beat_wave/widget/bottomsheet/song_more.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:beat_wave/bloc/playlist/playlist_bloc.dart';
 import 'package:beat_wave/bloc/playlist/playlist_event.dart';
 import 'package:beat_wave/bloc/playlist/playlist_state.dart';
-import 'package:beat_wave/data/model/playlist.dart';
 import 'package:beat_wave/di/di.dart';
 import 'package:beat_wave/view/miniplayer.dart';
 import 'package:beat_wave/view/song_list.dart';
@@ -24,6 +25,7 @@ class PlayListScreen extends StatelessWidget {
       floatingActionButton: Miniplayer(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
@@ -46,13 +48,12 @@ class PlayListScreen extends StatelessWidget {
       ),
       body: BlocBuilder<PlaylistBloc, PlaylistState>(
         builder: (context, state) {
-          //------------------ state playlist true ---------------------------------------
+//------------------ state playlist true ---------------------------------------
           return RefreshIndicator(
             onRefresh: () async {
               BlocProvider.of<PlaylistBloc>(context).add(GetPlaylistEvent());
             },
             child: CustomScrollView(
-              // physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
@@ -152,8 +153,71 @@ class PlayListScreen extends StatelessWidget {
                                   size: 30,
                                 ),
                                 onPressed: () async {
-                                  await morePlaylistBottomSheet(
-                                      context, state.playlist[index]);
+                                  await moreBottomSheet(
+                                      context,
+                                      ListTile(
+                                        shape: Theme.of(context)
+                                            .listTileTheme
+                                            .shape,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 7),
+                                        title: Text(
+                                            state.playlist[index].playlist),
+                                        titleTextStyle: Theme.of(context)
+                                            .listTileTheme
+                                            .titleTextStyle,
+                                        subtitle: Text(
+                                          "${state.playlist[index].numOfSongs} ${state.playlist[index].numOfSongs <= 1 ? "song" : "songs"}",
+                                        ),
+                                        subtitleTextStyle: Theme.of(context)
+                                            .listTileTheme
+                                            .subtitleTextStyle,
+                                        leading: Container(
+                                          height: 50,
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              image: const DecorationImage(
+                                                  image: AssetImage(
+                                                      "assets/images/cover.jpg"))),
+                                          child: QueryArtworkWidget(
+                                            id: state.playlist[index].id,
+                                            quality: 50,
+                                            size: 200,
+                                            controller: onAudioQuery,
+                                            format: ArtworkFormat.JPEG,
+                                            type: ArtworkType.AUDIO,
+                                            keepOldArtwork: false,
+                                            artworkBorder:
+                                                BorderRadius.circular(6),
+                                            artworkQuality: FilterQuality.low,
+                                            artworkFit: BoxFit.fill,
+                                            artworkHeight: 50,
+                                            artworkWidth: 50,
+                                            nullArtworkWidget: Container(
+                                              height: 50,
+                                              width: 50,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                image: const DecorationImage(
+                                                    image: AssetImage(
+                                                      "assets/images/cover.jpg",
+                                                    ),
+                                                    filterQuality:
+                                                        FilterQuality.low,
+                                                    fit: BoxFit.cover),
+                                                color: const Color.fromARGB(
+                                                    255, 61, 60, 60),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      playlistItems(
+                                          context, state.playlist[index]));
                                 },
                               ),
                             ),
@@ -270,147 +334,6 @@ class PlayListScreen extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-
-  Future<Widget?> morePlaylistBottomSheet(
-    final BuildContext context,
-    final PlaylistModel playlistModel,
-  ) {
-    final OnAudioQuery onAudioQuery = locator.get<OnAudioQuery>();
-    final List<Widget> items = [
-      ListTile(
-        horizontalTitleGap: 6,
-        leading: SvgPicture.asset(
-          "assets/svg/trash-icon.svg",
-          // ignore: deprecated_member_use
-          color: Theme.of(context).iconTheme.color, height: 18,
-          width: 18,
-        ),
-        title: Text(
-          "Remove playlist",
-          style: Theme.of(context).listTileTheme.titleTextStyle,
-        ),
-        onTap: () async {
-          Navigator.pop(context);
-          PlayListHandler.removePlaylist(playlistModel.id).then((value) {
-            if (value) {
-              BlocProvider.of<PlaylistBloc>(context).add(GetPlaylistEvent());
-            } else {}
-          });
-        },
-      ),
-      // ListTile(
-      //   horizontalTitleGap: 6,
-      //   leading: SvgPicture.asset(
-      //     "assets/svg/trash-icon.svg",
-      //     // ignore: deprecated_member_use
-      //     color: Theme.of(context).iconTheme.color, height: 18,
-      //     width: 18,
-      //   ),
-      //   title: Text(
-      //     "Rename playlist",
-      //     style: Theme.of(context).listTileTheme.titleTextStyle,
-      //   ),
-      //   onTap: () async {
-      //     Navigator.pop(context);
-      //     PlayListHandler.renamePlaylist(playlistModel.id, "ggg");
-      //   },
-      // ),
-    ];
-    return showModalBottomSheet(
-      elevation: 0,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-        ),
-      ),
-      context: context,
-      builder: (context) {
-        return ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
-          child: CustomScrollView(
-            shrinkWrap: true,
-            slivers: [
-              SliverAppBar(
-                elevation: 0,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                automaticallyImplyLeading: false,
-                pinned: true,
-                centerTitle: true,
-                toolbarHeight: 80,
-                title: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ListTile(
-                      shape: Theme.of(context).listTileTheme.shape,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 7),
-                      title: Text(playlistModel.playlist),
-                      titleTextStyle:
-                          Theme.of(context).listTileTheme.titleTextStyle,
-                      subtitle: Text(
-                        "${playlistModel.numOfSongs} ${playlistModel.numOfSongs <= 1 ? "song" : "songs"}",
-                      ),
-                      subtitleTextStyle:
-                          Theme.of(context).listTileTheme.subtitleTextStyle,
-                      leading: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            image: const DecorationImage(
-                                image: AssetImage("assets/images/cover.jpg"))),
-                        child: QueryArtworkWidget(
-                          id: playlistModel.id,
-                          quality: 50,
-                          size: 200,
-                          controller: onAudioQuery,
-                          format: ArtworkFormat.JPEG,
-                          type: ArtworkType.AUDIO,
-                          keepOldArtwork: false,
-                          artworkBorder: BorderRadius.circular(6),
-                          artworkQuality: FilterQuality.low,
-                          artworkFit: BoxFit.fill,
-                          artworkHeight: 50,
-                          artworkWidth: 50,
-                          nullArtworkWidget: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              image: const DecorationImage(
-                                  image: AssetImage(
-                                    "assets/images/cover.jpg",
-                                  ),
-                                  filterQuality: FilterQuality.low,
-                                  fit: BoxFit.cover),
-                              color: const Color.fromARGB(255, 61, 60, 60),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Divider(
-                      thickness: 1,
-                      height: 3,
-                    ),
-                  ],
-                ),
-                scrolledUnderElevation: 0,
-              ),
-              SliverList.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) => items[index],
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

@@ -1,4 +1,7 @@
 import 'dart:math';
+import 'package:beat_wave/di/di.dart';
+import 'package:beat_wave/widget/bottomsheet/bottom_sheet_item.dart';
+import 'package:beat_wave/widget/favorit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -13,7 +16,7 @@ import 'package:beat_wave/bloc/directorylist/directory_list_bloc.dart';
 import 'package:beat_wave/bloc/directorylist/directory_list_event.dart';
 import 'package:beat_wave/bloc/playlist/playlist_bloc.dart';
 import 'package:beat_wave/bloc/playlist/playlist_event.dart';
-import 'package:beat_wave/data/model/player.dart';
+import 'package:beat_wave/service/player_service/player.dart';
 import 'package:beat_wave/view/album_screen.dart';
 import 'package:beat_wave/view/directory_list.dart';
 import 'package:beat_wave/view/favorit_screen.dart';
@@ -22,7 +25,7 @@ import 'package:beat_wave/view/playlist_screen.dart';
 import 'package:beat_wave/view/serach_screen.dart';
 import 'package:beat_wave/widget/lodingwidget.dart';
 import 'package:beat_wave/widget/navigator.dart';
-import 'package:beat_wave/widget/song_more.dart';
+import 'package:beat_wave/widget/bottomsheet/song_more.dart';
 import 'package:beat_wave/widget/song_tile.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'artist_screen.dart';
@@ -36,6 +39,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final OnAudioQuery onAudioQuery = locator.get<OnAudioQuery>();
   @override
   Widget build(BuildContext context) {
     final Widget column = Column(
@@ -173,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Icon(
-                        Icons.folder_copy,
+                        Icons.folder,
                         size: 22,
                         color: Colors.white,
                       ),
@@ -283,11 +287,13 @@ class _HomeScreenState extends State<HomeScreen> {
         )
       ],
     );
+
     return Scaffold(
       drawer: const Drawerscreen(),
       floatingActionButton: Miniplayer(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
@@ -351,18 +357,17 @@ class _HomeScreenState extends State<HomeScreen> {
         //centerTitle: true,
         //  bottom: customtabbar(),
       ),
-      body: BlocProvider(
-        create: (context) {
-          var allSongBloc = AllSongBloc();
-          allSongBloc.add(GetAllSong());
-          return allSongBloc;
+      body: RefreshIndicator(
+        onRefresh: () async {
+          BlocProvider.of<AllSongBloc>(context).add(GetAllSong());
         },
         child: CustomScrollView(
           slivers: [
             const SliverToBoxAdapter(
-                child: SizedBox(
-              height: 8,
-            )),
+              child: SizedBox(
+                height: 8,
+              ),
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
@@ -408,7 +413,66 @@ class _HomeScreenState extends State<HomeScreen> {
                         await PlayerAudio.setAudioSource(state.songs, index);
                       },
                       moreOnTap: () async {
-                        await moreBottomSheet(context, state.songs[index]);
+                        await moreBottomSheet(
+                          context,
+                          ListTile(
+                            shape: Theme.of(context).listTileTheme.shape,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 7),
+                            title: Text(state.songs[index].title),
+                            titleTextStyle:
+                                Theme.of(context).listTileTheme.titleTextStyle,
+                            subtitle:
+                                Text(state.songs[index].artist ?? "<unkown>"),
+                            subtitleTextStyle: Theme.of(context)
+                                .listTileTheme
+                                .subtitleTextStyle,
+                            trailing: FavoritButton(
+                              song: state.songs[index],
+                              color: Theme.of(context).iconTheme.color ??
+                                  Colors.grey,
+                            ),
+                            leading: Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  image: const DecorationImage(
+                                      image: AssetImage(
+                                          "assets/images/cover.jpg"))),
+                              child: QueryArtworkWidget(
+                                id: state.songs[index].id,
+                                quality: 50,
+                                size: 200,
+                                controller: onAudioQuery,
+                                format: ArtworkFormat.JPEG,
+                                type: ArtworkType.AUDIO,
+                                keepOldArtwork: false,
+                                artworkBorder: BorderRadius.circular(6),
+                                artworkQuality: FilterQuality.low,
+                                artworkFit: BoxFit.fill,
+                                artworkHeight: 50,
+                                artworkWidth: 50,
+                                nullArtworkWidget: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    image: const DecorationImage(
+                                        image: AssetImage(
+                                          "assets/images/cover.jpg",
+                                        ),
+                                        filterQuality: FilterQuality.low,
+                                        fit: BoxFit.cover),
+                                    color:
+                                        const Color.fromARGB(255, 61, 60, 60),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          songItems(context, state.songs[index]),
+                        );
                       },
                     ),
                   );
@@ -469,19 +533,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                           TextButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .secondaryContainer,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16))),
-                              onPressed: () {
-                                BlocProvider.of<AllSongBloc>(context)
-                                    .add(GetAllSong());
-                              },
-                              child: const Text(
-                                "Try again",
-                              )),
+                            onPressed: () {
+                              BlocProvider.of<AllSongBloc>(context)
+                                  .add(GetAllSong());
+                            },
+                            child: const Text(
+                              "Try again",
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -513,18 +572,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 10,
                           ),
                           TextButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8))),
-                              onPressed: () {
-                                BlocProvider.of<AllSongBloc>(context)
-                                    .add(GetAllSong());
-                              },
-                              child: const Text(
-                                "Try again",
-                              )),
+                            onPressed: () {
+                              BlocProvider.of<AllSongBloc>(context)
+                                  .add(GetAllSong());
+                            },
+                            child: const Text(
+                              "Try again",
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -542,63 +597,68 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
-Widget _playandshuffle(BuildContext context, List<SongModel> songs) {
-  final Random random = Random();
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      GestureDetector(
-          onTap: () async {
-            if (songs.isNotEmpty) {
-              await PlayerAudio.setAudioSource(
-                  songs, random.nextInt(songs.length),
-                  isShuffle: true);
-            }
-          },
-          child: Container(
-            width: 36,
-            height: 36,
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color:
-                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.6),
-              shape: BoxShape.circle,
-            ),
-            child: SvgPicture.asset(
-              "assets/svg/shuffle-icon.svg",
-              // ignore: deprecated_member_use
-              color: Theme.of(context).iconTheme.color,
-            ),
-          )),
-      const SizedBox(
-        width: 8,
-      ),
-      GestureDetector(
-          onTap: () async {
-            if (songs.isNotEmpty) {
-              await PlayerAudio.setAudioSource(
-                songs,
-                0,
-              );
-            }
-          },
-          child: Container(
-            width: 36,
-            height: 36,
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color:
-                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.6),
-              shape: BoxShape.circle,
-            ),
-            child: SvgPicture.asset(
-              "assets/svg/play-album-icon.svg",
-              // ignore: deprecated_member_use
-              color: Theme.of(context).iconTheme.color,
-            ),
-          )),
-    ],
-  );
+  Widget _playandshuffle(
+      final BuildContext context, final List<SongModel> songs) {
+    final Random random = Random();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        GestureDetector(
+            onTap: () async {
+              if (songs.isNotEmpty) {
+                await PlayerAudio.setAudioSource(
+                    songs, random.nextInt(songs.length),
+                    isShuffle: true);
+              }
+            },
+            child: Container(
+              width: 36,
+              height: 36,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceVariant
+                    .withOpacity(0.6),
+                shape: BoxShape.circle,
+              ),
+              child: SvgPicture.asset(
+                "assets/svg/shuffle-icon.svg",
+                // ignore: deprecated_member_use
+                color: Theme.of(context).iconTheme.color,
+              ),
+            )),
+        const SizedBox(
+          width: 8,
+        ),
+        GestureDetector(
+            onTap: () async {
+              if (songs.isNotEmpty) {
+                await PlayerAudio.setAudioSource(
+                  songs,
+                  0,
+                );
+              }
+            },
+            child: Container(
+              width: 36,
+              height: 36,
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceVariant
+                    .withOpacity(0.6),
+                shape: BoxShape.circle,
+              ),
+              child: SvgPicture.asset(
+                "assets/svg/play-album-icon.svg",
+                // ignore: deprecated_member_use
+                color: Theme.of(context).iconTheme.color,
+              ),
+            )),
+      ],
+    );
+  }
 }

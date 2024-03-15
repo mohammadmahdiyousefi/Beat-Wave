@@ -71,7 +71,6 @@ class PlayerAudio {
 
     await player.setAudioSource(playlist,
         initialIndex: index, initialPosition: Duration.zero);
-
     player.play();
     player.setShuffleModeEnabled(isShuffle);
   }

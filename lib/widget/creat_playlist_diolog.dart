@@ -1,9 +1,10 @@
 import 'dart:ui';
+import 'package:beat_wave/widget/toastflutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:beat_wave/bloc/playlist/playlist_bloc.dart';
 import 'package:beat_wave/bloc/playlist/playlist_event.dart';
-import 'package:beat_wave/data/model/playlist.dart';
+import 'package:beat_wave/service/playlist_service/playlist.dart';
 
 Future craetePlaylist(
   BuildContext cxt,
@@ -110,7 +111,11 @@ Future craetePlaylist(
                                   if (value) {
                                     BlocProvider.of<PlaylistBloc>(cxt)
                                         .add(GetPlaylistEvent());
-                                  } else {}
+                                    toast(context,
+                                        "Crraeted Playlist successfully");
+                                  } else {
+                                    toast(context, "Error");
+                                  }
                                   Navigator.pop(context);
                                 });
                               },

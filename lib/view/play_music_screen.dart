@@ -1,16 +1,15 @@
 import 'dart:ui';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:beat_wave/widget/bottomsheet/bottom_sheet_item.dart';
+import 'package:beat_wave/widget/bottomsheet/song_more.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:beat_wave/di/di.dart';
 import 'package:beat_wave/data/model/positiondata.dart';
-import 'package:beat_wave/widget/add_to_playlist.dart';
 import 'package:beat_wave/widget/favorit_button.dart';
-import 'package:beat_wave/widget/song_info_widget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:share_plus/share_plus.dart';
 
 class PlayMusicScreen extends StatelessWidget {
   PlayMusicScreen({super.key});
@@ -77,7 +76,72 @@ class PlayMusicScreen extends StatelessWidget {
                             ),
                             IconButton(
                               onPressed: () async {
-                                await _moreBottomSheet(context, info);
+                                await moreBottomSheet(
+                                    context,
+                                    ListTile(
+                                      shape:
+                                          Theme.of(context).listTileTheme.shape,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 7),
+                                      title: Text(info.title),
+                                      titleTextStyle: Theme.of(context)
+                                          .listTileTheme
+                                          .titleTextStyle,
+                                      subtitle: Text(info.artist ?? "<unkown>"),
+                                      subtitleTextStyle: Theme.of(context)
+                                          .listTileTheme
+                                          .subtitleTextStyle,
+                                      trailing: FavoritButton(
+                                        song: info,
+                                        color:
+                                            Theme.of(context).iconTheme.color ??
+                                                Colors.grey,
+                                      ),
+                                      leading: Container(
+                                        height: 50,
+                                        width: 50,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            image: const DecorationImage(
+                                                image: AssetImage(
+                                                    "assets/images/cover.jpg"))),
+                                        child: QueryArtworkWidget(
+                                          id: info.id,
+                                          quality: 50,
+                                          size: 200,
+                                          controller: onAudioQuery,
+                                          format: ArtworkFormat.JPEG,
+                                          type: ArtworkType.AUDIO,
+                                          keepOldArtwork: false,
+                                          artworkBorder:
+                                              BorderRadius.circular(6),
+                                          artworkQuality: FilterQuality.low,
+                                          artworkFit: BoxFit.fill,
+                                          artworkHeight: 50,
+                                          artworkWidth: 50,
+                                          nullArtworkWidget: Container(
+                                            height: 50,
+                                            width: 50,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              image: const DecorationImage(
+                                                  image: AssetImage(
+                                                    "assets/images/cover.jpg",
+                                                  ),
+                                                  filterQuality:
+                                                      FilterQuality.low,
+                                                  fit: BoxFit.cover),
+                                              color: const Color.fromARGB(
+                                                  255, 61, 60, 60),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    playeritems(context, info));
                               },
                               icon: const Icon(
                                 Icons.more_horiz,
@@ -178,10 +242,6 @@ class PlayMusicScreen extends StatelessWidget {
                                     const Duration(minutes: 1),
                                 buffered: positionData?.bufferedPosition ??
                                     Duration.zero,
-                                bufferedBarColor: Theme.of(context)
-                                    .sliderTheme
-                                    .activeTrackColor!
-                                    .withOpacity(0.3),
                                 thumbRadius: 8,
                                 barHeight: 5,
                                 thumbGlowRadius: 8,
@@ -193,10 +253,13 @@ class PlayMusicScreen extends StatelessWidget {
                                     .valueIndicatorTextStyle,
                                 baseBarColor: Theme.of(context)
                                     .sliderTheme
-                                    .secondaryActiveTrackColor,
+                                    .inactiveTrackColor,
                                 progressBarColor: Theme.of(context)
                                     .sliderTheme
                                     .activeTrackColor,
+                                bufferedBarColor: Theme.of(context)
+                                    .sliderTheme
+                                    .secondaryActiveTrackColor,
                                 thumbColor:
                                     Theme.of(context).sliderTheme.thumbColor,
                                 onSeek: (value) {
@@ -259,262 +322,6 @@ class PlayMusicScreen extends StatelessWidget {
     );
   }
 
-  Future<Widget?> _moreBottomSheet(
-    final BuildContext context,
-    final SongModel song,
-  ) {
-    final OnAudioQuery onAudioQuery = locator.get<OnAudioQuery>();
-    final List<Widget> items = [
-      ListTile(
-        horizontalTitleGap: 6,
-        leading: SvgPicture.asset(
-          "assets/svg/add-to-album-icon.svg",
-          // ignore: deprecated_member_use
-          color: Theme.of(context).iconTheme.color, height: 18,
-          width: 18,
-        ),
-        title: Text(
-          "Add to playlist",
-          style: Theme.of(context).listTileTheme.titleTextStyle,
-        ),
-        onTap: () async {
-          Navigator.pop(context);
-          await addtoplaylistbottomshet(context, song);
-        },
-      ),
-      ListTile(
-        horizontalTitleGap: 6,
-        leading: SvgPicture.asset(
-          "assets/svg/speedometer.svg",
-          // ignore: deprecated_member_use
-          color: Theme.of(context).iconTheme.color,
-          height: 18,
-          width: 18,
-        ),
-        title: Text(
-          "Play Speed",
-          style: Theme.of(context).listTileTheme.titleTextStyle,
-        ),
-        onTap: () async {
-          Navigator.pop(context);
-          await _playSpeedBottomSheet(context);
-        },
-      ),
-      ListTile(
-        horizontalTitleGap: 6,
-        leading: SvgPicture.asset(
-          "assets/svg/share-icon.svg",
-          // ignore: deprecated_member_use
-          color: Theme.of(context).iconTheme.color, height: 18,
-          width: 18,
-        ),
-        title: Text(
-          "Share",
-          style: Theme.of(context).listTileTheme.titleTextStyle,
-        ),
-        onTap: () async {
-          Navigator.pop(context);
-          await Share.shareXFiles([XFile(song.data)],
-              text: song.displayNameWOExt);
-        },
-      ),
-      ListTile(
-        horizontalTitleGap: 6,
-        leading: SvgPicture.asset(
-          "assets/svg/Group 8.svg",
-          // ignore: deprecated_member_use
-          color: Theme.of(context).iconTheme.color, height: 18,
-          width: 18,
-        ),
-        title: Text(
-          "Properties",
-          style: Theme.of(context).listTileTheme.titleTextStyle,
-        ),
-        onTap: () async {
-          Navigator.pop(context);
-          await songInfoBottomSheet(context, song);
-        },
-      ),
-    ];
-    return showModalBottomSheet(
-      elevation: 0,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-        ),
-      ),
-      constraints:
-          BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
-      context: context,
-      builder: (context) {
-        return ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
-          child: CustomScrollView(
-            shrinkWrap: true,
-            slivers: [
-              SliverAppBar(
-                elevation: 0,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                automaticallyImplyLeading: false,
-                pinned: true,
-                toolbarHeight: 80,
-                centerTitle: true,
-                title: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ListTile(
-                      shape: Theme.of(context).listTileTheme.shape,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 7),
-                      title: Text(song.title),
-                      titleTextStyle:
-                          Theme.of(context).listTileTheme.titleTextStyle,
-                      subtitle: Text(song.artist ?? "<unkown>"),
-                      subtitleTextStyle:
-                          Theme.of(context).listTileTheme.subtitleTextStyle,
-                      trailing: FavoritButton(
-                        song: song,
-                        color: Theme.of(context).iconTheme.color ?? Colors.grey,
-                      ),
-                      leading: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            image: const DecorationImage(
-                                image: AssetImage("assets/images/cover.jpg"))),
-                        child: QueryArtworkWidget(
-                          id: song.id,
-                          quality: 50,
-                          size: 200,
-                          controller: onAudioQuery,
-                          format: ArtworkFormat.JPEG,
-                          type: ArtworkType.AUDIO,
-                          keepOldArtwork: false,
-                          artworkBorder: BorderRadius.circular(6),
-                          artworkQuality: FilterQuality.low,
-                          artworkFit: BoxFit.fill,
-                          artworkHeight: 50,
-                          artworkWidth: 50,
-                          nullArtworkWidget: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              image: const DecorationImage(
-                                  image: AssetImage(
-                                    "assets/images/cover.jpg",
-                                  ),
-                                  filterQuality: FilterQuality.low,
-                                  fit: BoxFit.cover),
-                              color: const Color.fromARGB(255, 61, 60, 60),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Divider(
-                      thickness: 1,
-                      height: 3,
-                    ),
-                  ],
-                ),
-                scrolledUnderElevation: 0,
-              ),
-              SliverList.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) => items[index],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<Widget?> _playSpeedBottomSheet(
-    final BuildContext context,
-  ) {
-    return showModalBottomSheet(
-      elevation: 0,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-        ),
-      ),
-      context: context,
-      builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(
-              height: 8,
-            ),
-            const Text(
-              "Play Speed",
-            ),
-            const Divider(
-              indent: 16,
-              endIndent: 16,
-              thickness: 1,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            StreamBuilder<double>(
-                stream: _player.speedStream,
-                initialData: _player.speed,
-                builder: (context, snapshot) {
-                  final double? speed = snapshot.data;
-                  return Column(
-                    children: [
-                      Text("Speed : ${speed?.toStringAsFixed(2) ?? "1.0"} x"),
-                      Slider(
-                        value: speed ?? 0.5,
-                        min: 0.25,
-                        max: 2,
-                        onChanged: (value) {
-                          _player.setSpeed(value);
-                        },
-                      ),
-                    ],
-                  );
-                }),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton(
-                    onPressed: () => _player.setSpeed(0.25),
-                    child: const Text("0.25x")),
-                TextButton(
-                    onPressed: () => _player.setSpeed(0.5),
-                    child: const Text("0.5x")),
-                TextButton(
-                    onPressed: () => _player.setSpeed(1),
-                    child: const Text("Normal")),
-                TextButton(
-                    onPressed: () => _player.setSpeed(1.5),
-                    child: const Text("1.5x")),
-                TextButton(
-                    onPressed: () => _player.setSpeed(2),
-                    child: const Text("2.0x")),
-              ],
-            ),
-            const SizedBox(
-              height: 16,
-            )
-          ],
-        );
-      },
-    );
-  }
-
   Widget _playerButton(
       final BuildContext context, final PlayerState? playerState) {
     final ProcessingState processingState =
@@ -539,8 +346,8 @@ class PlayMusicScreen extends StatelessWidget {
                       "assets/svg/play.svg",
                       // ignore: deprecated_member_use
                       color: Colors.white,
-                      height: 26,
-                      width: 26,
+                      height: 24,
+                      width: 24,
                     ),
                     onPressed: () {
                       _player.play();
@@ -552,8 +359,8 @@ class PlayMusicScreen extends StatelessWidget {
                           "assets/svg/pause.svg",
                           // ignore: deprecated_member_use
                           color: Colors.white,
-                          height: 26,
-                          width: 26,
+                          height: 24,
+                          width: 24,
                         ),
                         onPressed: () {
                           _player.pause();
@@ -564,8 +371,8 @@ class PlayMusicScreen extends StatelessWidget {
                           "assets/svg/replay.svg",
                           // ignore: deprecated_member_use
                           color: Colors.white,
-                          height: 26,
-                          width: 26,
+                          height: 24,
+                          width: 24,
                         ),
                         onPressed: () {
                           _player.seek(Duration.zero);
@@ -598,8 +405,8 @@ class PlayMusicScreen extends StatelessWidget {
         "assets/svg/previous.svg",
         // ignore: deprecated_member_use
         color: Colors.white,
-        height: 32,
-        width: 32,
+        height: 30,
+        width: 30,
       ),
       onPressed: _player.hasPrevious ? _player.seekToPrevious : null,
     );
@@ -612,8 +419,8 @@ class PlayMusicScreen extends StatelessWidget {
         "assets/svg/next.svg",
         // ignore: deprecated_member_use
         color: Colors.white,
-        height: 32,
-        width: 32,
+        height: 30,
+        width: 30,
       ),
       onPressed: _player.hasNext ? _player.seekToNext : null,
     );
@@ -626,8 +433,8 @@ class PlayMusicScreen extends StatelessWidget {
         "assets/svg/shuffle.svg",
         // ignore: deprecated_member_use
         color: isEnabled ? Theme.of(context).primaryColor : Colors.white,
-        height: 22,
-        width: 22,
+        height: 21,
+        width: 21,
       ),
       onPressed: () async {
         final enable = !isEnabled;
@@ -645,22 +452,22 @@ class PlayMusicScreen extends StatelessWidget {
         "assets/svg/repeat.svg",
         // ignore: deprecated_member_use
         color: Colors.white,
-        height: 36,
-        width: 36,
+        height: 34,
+        width: 34,
       ),
       SvgPicture.asset(
         "assets/svg/repeat.svg",
         // ignore: deprecated_member_use
         color: Theme.of(context).primaryColor,
-        height: 36,
-        width: 36,
+        height: 34,
+        width: 34,
       ),
       SvgPicture.asset(
         "assets/svg/repeat-one.svg",
         // ignore: deprecated_member_use
         color: Theme.of(context).primaryColor,
-        height: 36,
-        width: 36,
+        height: 34,
+        width: 34,
       )
     ];
     const cycleModes = [

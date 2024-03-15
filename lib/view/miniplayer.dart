@@ -131,7 +131,7 @@ class Miniplayer extends StatelessWidget {
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             const SizedBox(
-                                              height: 2,
+                                              height: 1,
                                             ),
                                             Text(
                                               info.artist ?? "<unknown>",
@@ -187,7 +187,7 @@ class Miniplayer extends StatelessWidget {
                                               TimeLabelLocation.none,
                                           baseBarColor: Theme.of(context)
                                               .sliderTheme
-                                              .secondaryActiveTrackColor,
+                                              .inactiveTrackColor,
                                           progressBarColor: Theme.of(context)
                                               .sliderTheme
                                               .activeTrackColor,

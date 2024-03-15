@@ -24,53 +24,51 @@ Future<Widget?> songInfoBottomSheet(
         song.dateAdded != null ? dateConvort(song.dateAdded ?? 0) : null,
     "Data modified":
         song.dateModified != null ? dateConvort(song.dateModified ?? 0) : null,
-    "File extention": song.fileExtension
+    "File extention": song.fileExtension,
+    "is Ringtone": song.isRingtone,
+    "is Alarm": song.isAlarm,
+    "is Notification": song.isNotification,
   };
 
   return showModalBottomSheet(
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    elevation: 0,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(25),
-        topRight: Radius.circular(25),
-      ),
-    ),
+    backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor,
+    elevation: Theme.of(context).bottomSheetTheme.elevation,
+    shape: Theme.of(context).bottomSheetTheme.shape,
     context: context,
     builder: (context) {
       return ClipRRect(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
+          topLeft: Radius.circular(18),
+          topRight: Radius.circular(18),
         ),
         child: CustomScrollView(
           shrinkWrap: true,
           slivers: [
             SliverAppBar(
-              elevation: 0,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              shape: Theme.of(context).bottomSheetTheme.shape,
+              elevation: Theme.of(context).bottomSheetTheme.elevation,
+              backgroundColor:
+                  Theme.of(context).bottomSheetTheme.backgroundColor,
               automaticallyImplyLeading: false,
               pinned: true,
               centerTitle: true,
-              title: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                    child: Text(
-                      song.title,
-                      style: Theme.of(context).listTileTheme.titleTextStyle,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const Divider(
-                      // indent: 16,
-                      //  endIndent: 16,
-                      ),
-                ],
-              ),
+              titleSpacing: 16,
+              toolbarHeight: 45,
               scrolledUnderElevation: 0,
+              title: Text(
+                song.title,
+                style: Theme.of(context).listTileTheme.titleTextStyle,
+                overflow: TextOverflow.ellipsis,
+              ),
+              bottom: const PreferredSize(
+                preferredSize: Size(double.infinity, 3),
+                child: Divider(
+                  thickness: 1,
+                  height: 3,
+                  indent: 16,
+                  endIndent: 16,
+                ),
+              ),
             ),
             SliverList.builder(
               itemCount: items.length,

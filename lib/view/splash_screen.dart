@@ -1,5 +1,8 @@
+import 'package:beat_wave/bloc/all_song/all_song_bloc.dart';
+import 'package:beat_wave/bloc/all_song/all_song_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:beat_wave/permission/premission.dart';
@@ -68,16 +71,16 @@ class _SplashScreenState extends State<SplashScreen>
                                 width: 55,
                               ),
                               const SizedBox(
-                                height: 32,
+                                height: 22,
                               ),
                               const Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 67),
                                 child: Text(
-                                  "دسترسی دارده نشده است ",
+                                  "Access is not granted",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
-                                    fontFamily: 'ISW',
+                                    fontFamily: 'ROBR',
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -88,12 +91,12 @@ class _SplashScreenState extends State<SplashScreen>
                               const Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 55),
                                 child: Text(
-                                  "برای استفاده از قابلیت های این برنامه باید به حافظه دستگاه دسترسی داشته باشد ",
+                                  "To display and play your music, Beat Wave needs access to the storage space to get the music information",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: Color(0xFFF4F4F4),
-                                    fontSize: 13,
-                                    fontFamily: 'ISW',
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontFamily: 'ROBR',
                                     fontWeight: FontWeight.w300,
                                   ),
                                 ),
@@ -118,8 +121,13 @@ class _SplashScreenState extends State<SplashScreen>
                                         await openAppSettings();
                                       },
                                       child: const Text(
-                                        "باز کردن تنظیمات",
-                                        style: TextStyle(color: Colors.white),
+                                        "Open settings",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontFamily: 'ROBR',
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       )),
                                   ElevatedButton(
                                       style: ElevatedButton.styleFrom(
@@ -134,8 +142,13 @@ class _SplashScreenState extends State<SplashScreen>
                                         permission();
                                       },
                                       child: const Text(
-                                        "ورود",
-                                        style: TextStyle(color: Colors.black),
+                                        "log in",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontFamily: 'ROBR',
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       )),
                                 ],
                               ),
@@ -143,11 +156,11 @@ class _SplashScreenState extends State<SplashScreen>
                           )),
               ),
               const Text(
-                "ساخته شده توسط آسا تیم",
+                "Developed by Mohammad Mahdi",
                 style: TextStyle(
-                  color: Color(0xFFF4F4F4),
+                  color: Color.fromARGB(174, 244, 244, 244),
                   fontSize: 13,
-                  fontFamily: 'ISW',
+                  fontFamily: 'ROBR',
                   fontWeight: FontWeight.w300,
                 ),
               ),
@@ -160,21 +173,27 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void permission() {
-    per = true;
-    setState(() {});
     Future.delayed(const Duration(seconds: 2), () async {
-      per = await AppPremission.storage();
-      if (per) {
-        navigate();
-      } else {
-        per = false;
-        setState(() {});
-      }
+      await AppPremission.storage().then((value) {
+        if (value) {
+          navigate();
+        } else {
+          per = value;
+          setState(() {});
+        }
+      });
     });
   }
 
   void navigate() {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => BlocProvider(
+              create: (context) {
+                var allSongBloc = AllSongBloc();
+                allSongBloc.add(GetAllSong());
+                return allSongBloc;
+              },
+              child: const HomeScreen(),
+            )));
   }
 }

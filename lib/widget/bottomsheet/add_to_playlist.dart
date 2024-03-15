@@ -1,10 +1,11 @@
+import 'package:beat_wave/widget/toastflutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:beat_wave/bloc/playlist/playlist_bloc.dart';
 import 'package:beat_wave/bloc/playlist/playlist_event.dart';
 import 'package:beat_wave/bloc/playlist/playlist_state.dart';
-import 'package:beat_wave/data/model/playlist.dart';
+import 'package:beat_wave/service/playlist_service/playlist.dart';
 import 'package:beat_wave/widget/creat_playlist_diolog.dart';
 import 'package:beat_wave/widget/lodingwidget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -14,14 +15,10 @@ Future<Widget?> addtoplaylistbottomshet(
   SongModel song,
 ) {
   return showModalBottomSheet(
-    elevation: 0,
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(25),
-        topRight: Radius.circular(25),
-      ),
-    ),
+    backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor,
+    elevation: Theme.of(context).bottomSheetTheme.elevation,
+    shape: Theme.of(context).bottomSheetTheme.shape,
+    constraints: const BoxConstraints(maxHeight: 360),
     context: context,
     builder: (context) {
       return BlocProvider(
@@ -50,17 +47,31 @@ class AddToPlaylistView extends StatelessWidget {
           BlocProvider.of<PlaylistBloc>(context).add(GetPlaylistEvent());
         },
         child: CustomScrollView(shrinkWrap: true, slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              child: ListTile(
-                title: const Text("Create Playlist"),
-                leading: const Icon(Icons.add),
-                contentPadding: const EdgeInsets.only(left: 20),
-                shape: Theme.of(context).listTileTheme.shape,
-                onTap: () async {
-                  await craetePlaylist(context);
-                },
+          SliverAppBar(
+            backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor,
+            elevation: Theme.of(context).bottomSheetTheme.elevation,
+            shape: Theme.of(context).bottomSheetTheme.shape,
+            automaticallyImplyLeading: false,
+            pinned: true,
+            centerTitle: true,
+            toolbarHeight: 60,
+            scrolledUnderElevation: 0,
+            title: ListTile(
+              title: const Text("Create Playlist"),
+              leading: const Icon(Icons.add),
+              contentPadding: const EdgeInsets.only(left: 20),
+              shape: Theme.of(context).listTileTheme.shape,
+              onTap: () async {
+                await craetePlaylist(context);
+              },
+            ),
+            bottom: const PreferredSize(
+              preferredSize: Size(double.infinity, 3),
+              child: Divider(
+                thickness: 1,
+                height: 3,
+                indent: 16,
+                endIndent: 16,
               ),
             ),
           ),
@@ -78,7 +89,10 @@ class AddToPlaylistView extends StatelessWidget {
                             if (value) {
                               BlocProvider.of<PlaylistBloc>(context)
                                   .add(GetPlaylistEvent());
-                            } else {}
+                              toast(context, "Added to playlist successfully");
+                            } else {
+                              toast(context, "Error");
+                            }
                           });
                         },
                         shape: RoundedRectangleBorder(
@@ -124,52 +138,12 @@ class AddToPlaylistView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // trailing: PopupMenuButton(
-                        //   shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(16)),
-                        //   icon: const Icon(
-                        //     Icons.more_horiz,
-                        //     size: 30,
-                        //   ),
-                        //   itemBuilder: (context) {
-                        //     return [
-                        //       PopupMenuItem(
-                        //         onTap: () async {
-                        //           PlayListHandler.removePlaylist(
-                        //                   state.playlist[index].id)
-                        //               .then((value) {
-                        //             if (value) {
-                        //               BlocProvider.of<PlaylistBloc>(context)
-                        //                   .add(GetPlaylistEvent());
-                        //             } else {}
-                        //           });
-                        //         },
-                        //         child: Row(
-                        //           children: [
-                        //             SvgPicture.asset(
-                        //                 "assets/svg/trash-icon.svg",
-                        //                 // ignore: deprecated_member_use
-                        //                 color: Theme.of(context)
-                        //                     .iconTheme
-                        //                     .color),
-                        //             const SizedBox(
-                        //               width: 9,
-                        //             ),
-                        //             Text("Delete",
-                        //                 style: Theme.of(context)
-                        //                     .popupMenuTheme
-                        //                     .textStyle),
-                        //           ],
-                        //         ),
-                        //       )
-                        //     ];
-                        //   },
-                        // )
                       ),
                     );
                   })
               : (state is PlayListLoading)
-                  ? const SliverToBoxAdapter(child: Loading())
+                  ? const SliverFillRemaining(
+                      hasScrollBody: false, child: Loading())
                   : (state is PlayListEmpty)
                       ? SliverFillRemaining(
                           hasScrollBody: false,

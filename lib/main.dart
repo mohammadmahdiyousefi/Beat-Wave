@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -13,11 +14,13 @@ void main() async {
   await JustAudioBackground.init(
       androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
       androidNotificationChannelName: 'Audio playback',
+      androidNotificationIcon: 'mipmap/ic_launcher_monochrome',
       androidNotificationOngoing: true,
       androidStopForegroundOnPause: true,
       androidShowNotificationBadge: true,
       preloadArtwork: true);
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Hive.initFlutter();
   await Hive.openBox<String>('FavoriteSongs');
   await Hive.openBox('ThemeMode');

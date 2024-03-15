@@ -6,9 +6,13 @@ class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
   final String buymeacoffee =
       "https://www.buymeacoffee.com/mohammadmahdiyousefi";
+  final String releases =
+      "https://github.com/mohammadmahdiyousefi/Beat-Wave/releases";
+  // final String Packagename = "com.example.Beat_wave";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           "About",
@@ -44,7 +48,18 @@ class AboutScreen extends StatelessWidget {
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
-              onTap: () {},
+              onTap: () async {
+                if (await canLaunchUrl(
+                  Uri.parse(releases),
+                )) {
+                  await launchUrl(
+                    Uri.parse(releases),
+                  );
+                } else {
+                  await launchUrl(Uri.parse(releases),
+                      mode: LaunchMode.externalApplication);
+                }
+              },
             ),
           ),
           Padding(
@@ -54,7 +69,9 @@ class AboutScreen extends StatelessWidget {
               subtitle: const Text("Let you friend share this App"),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
-              onTap: () {},
+              onTap: () async {
+                // Share.shareXFiles([XFile("app.apk")]);
+              },
             ),
           ),
           Padding(
@@ -74,31 +91,23 @@ class AboutScreen extends StatelessWidget {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListTile(
-              title: const Text("Donate with Gpay"),
-              subtitle: const Text("Every small amount makes me smile :) "),
-              trailing: const Icon(
-                Icons.payment,
-                color: Colors.amber,
-              ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              onTap: () {},
-            ),
-          ),
           // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 25),
-          //   child: Text(
-          //     "This App an open-source project and can be found on ",
-          //     textAlign: TextAlign.center,
-          //     style: Theme.of(context).textTheme.titleLarge,
+          //   padding: const EdgeInsets.symmetric(horizontal: 16),
+          //   child: ListTile(
+          //     title: const Text("Donate with Gpay"),
+          //     subtitle: const Text("Every small amount makes me smile :) "),
+          //     trailing: const Icon(
+          //       Icons.payment,
+          //       color: Colors.amber,
+          //     ),
+          //     shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(16)),
+          //     onTap: () {},
           //   ),
           // ),
           const Spacer(),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
